@@ -1,4 +1,4 @@
-package com.spring.guideance.domain;
+package com.spring.guideance.article;
 
 import lombok.Getter;
 import org.springframework.data.annotation.Id;
