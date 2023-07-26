@@ -29,6 +29,11 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.junit.jupiter:junit-jupiter-api'
 
+	// mysql dependency
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	runtimeOnly 'mysql:mysql-connector-java:8.0.32'
+
 	// redis dependency
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
