@@ -1,5 +1,7 @@
 package com.spring.guideance.post.domain;
 
+import com.spring.guideance.post.dto.request.CreateArticleDto;
+import com.spring.guideance.post.dto.request.UpdateArticleDto;
 import com.spring.guideance.tag.domain.ArticleTag;
 import com.spring.guideance.user.domain.User;
 import lombok.Getter;
@@ -37,4 +39,23 @@ public class Article {
 
     @OneToMany(mappedBy = "article") // 글이 가진 태그
     private List<ArticleTag> articleTags = new ArrayList<>();
+
+    // 생성 메서드
+    public static Article createArticle(CreateArticleDto createArticleDto) {
+        Article article = new Article();
+        article.title = createArticleDto.getTitle();
+        article.contents = createArticleDto.getContents();
+        article.createdAt = LocalDateTime.now();
+        return article;
+    }
+
+    // 수정 메서드
+    public void updateArticle(UpdateArticleDto updateArticleDto) {
+        this.title = updateArticleDto.getTitle();
+        this.contents = updateArticleDto.getContents();
+    }
+
+    public boolean isAuthor(User user) {
+        return this.user.equals(user);
+    }
 }
