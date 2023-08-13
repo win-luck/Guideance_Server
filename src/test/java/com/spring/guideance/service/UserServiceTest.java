@@ -6,6 +6,7 @@ import com.spring.guideance.user.dto.response.ResponseUserDto;
 import com.spring.guideance.user.repository.UserRepository;
 import com.spring.guideance.user.service.UserService;
 import com.spring.guideance.util.exception.UserException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +21,18 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@DirtiesContext // 테스트가 끝나면 컨텍스트를 다시 로드한다.
-@Transactional // 테스트 케이스에 있어서 트랜잭션 처리를 해주고 테스트가 끝나면 롤백을 해준다.
+@DirtiesContext
+@Transactional
 @Rollback
 public class UserServiceTest {
 
     @Autowired private UserService userService;
     @Autowired private UserRepository userRepository;
+
+    @AfterEach
+    public void tearDown(){
+        userRepository.deleteAll();
+    }
 
     @Test
     public void 회원가입(){
