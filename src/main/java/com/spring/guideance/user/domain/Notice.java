@@ -22,4 +22,13 @@ public class Notice {
 
     @OneToMany(mappedBy = "user")
     private List<UserNotice> userNotices = new ArrayList<>();
+
+    // 생성 메서드
+    public static Notice createNotice(int type, String title, String contents) {
+        Notice notice = new Notice();
+        notice.type = type;
+        notice.title = title;
+        notice.contents = contents;
+        return notice;
+    }
 }
