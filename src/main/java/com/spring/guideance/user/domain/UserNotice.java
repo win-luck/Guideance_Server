@@ -1,7 +1,5 @@
-package com.spring.guideance.like;
+package com.spring.guideance.user.domain;
 
-import com.spring.guideance.article.Article;
-import com.spring.guideance.user.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,19 +7,25 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter @Setter
-public class Likes {
+@Setter @Getter
+public class UserNotice {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "likes_id")
+    @Column(name = "user_notice_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "article_id")
-    private Article article;
+    private boolean isRead;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "notice_id")
+    private Notice notice;
+
     private LocalDateTime createdAt;
+
+    public void read() {
+        this.isRead = true;
+    }
 }

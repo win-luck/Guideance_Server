@@ -1,9 +1,10 @@
-package com.spring.guideance.user;
+package com.spring.guideance.user.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.spring.guideance.article.Article;
-import com.spring.guideance.comment.Comment;
-import com.spring.guideance.like.Likes;
+import com.spring.guideance.post.domain.Article;
+import com.spring.guideance.post.domain.Comment;
+import com.spring.guideance.post.domain.Likes;
+import com.spring.guideance.tag.domain.UserTag;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,5 +45,8 @@ public class User {
     private List<Likes> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
-    private List<Notice> likeArticles = new ArrayList<>();
+    private List<UserNotice> userNotices = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<UserTag> userTags = new ArrayList<>();
 }

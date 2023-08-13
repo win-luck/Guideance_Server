@@ -1,4 +1,4 @@
-package com.spring.guideance.tag;
+package com.spring.guideance.tag.domain;
 
 import lombok.Getter;
 import lombok.Setter;

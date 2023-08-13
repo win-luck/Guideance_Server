@@ -1,8 +1,7 @@
-package com.spring.guideance.article;
+package com.spring.guideance.post.domain;
 
-import com.spring.guideance.comment.Comment;
-import com.spring.guideance.like.Likes;
-import com.spring.guideance.user.User;
+import com.spring.guideance.tag.domain.ArticleTag;
+import com.spring.guideance.user.domain.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,21 +21,20 @@ public class Article {
 
     private String title;
 
-    private String content;
-
-    private LocalDateTime createdAt;
-
-    private int readCount;
-
-    private int likeCount;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "article")
+    private String contents;
+
+    private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "article") // 글에 담긴 댓글
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "article")
+    @OneToMany(mappedBy = "article") // 글이 가진 좋아요
     private List<Likes> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "article") // 글이 가진 태그
+    private List<ArticleTag> articleTags = new ArrayList<>();
 }

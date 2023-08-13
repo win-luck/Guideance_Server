@@ -1,11 +1,9 @@
-package com.spring.guideance.comment;
+package com.spring.guideance.post.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.spring.guideance.article.Article;
-import com.spring.guideance.user.User;
+import com.spring.guideance.user.domain.User;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.redis.core.RedisHash;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -28,7 +26,7 @@ public class Comment {
     @JoinColumn(name = "article_id")
     private Article article; // 댓글이 달린 게시글
 
-    private String content; // 댓글 내용
+    private String contents; // 댓글 내용
 
     private LocalDateTime createdAt;
 }
