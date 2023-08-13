@@ -1,6 +1,6 @@
-package com.spring.guideance.tag;
+package com.spring.guideance.tag.domain;
 
-import com.spring.guideance.user.User;
+import com.spring.guideance.user.domain.User;
 import lombok.Getter;
 import lombok.Setter;
 
