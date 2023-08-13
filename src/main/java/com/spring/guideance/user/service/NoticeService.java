@@ -5,6 +5,7 @@ import com.spring.guideance.user.dto.response.ResponseNoticeDto;
 import com.spring.guideance.user.dto.response.ResponseUserDto;
 import com.spring.guideance.user.repository.NoticeRepository;
 import com.spring.guideance.user.repository.UserNoticeRepository;
+import com.spring.guideance.user.repository.UserRepository;
 import com.spring.guideance.util.exception.NoticeException;
 import com.spring.guideance.util.exception.ResponseCode;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +18,15 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class NoticeService {
 
+    private final UserRepository userRepository;
     private final NoticeRepository noticeRepository;
     private final UserNoticeRepository userNoticeRepository;
+
+    // 알림 생성
+    public Long createNotice(Long noticeId, Long userId) {
+        noticeRepository.findById(noticeId).orElseThrow(() -> new NoticeException(ResponseCode.NOTICE_NOT_FOUND));
+        return userNoticeRepository.save(UserNotice.createUserNotice(noticeRepository.findById(noticeId).get(), userRepository.findById(userId).get())).getId();
+    }
 
     // 특정 user가 받은 모든 알림 조회
     public List<ResponseNoticeDto> getUserNotice(Long userId) {
