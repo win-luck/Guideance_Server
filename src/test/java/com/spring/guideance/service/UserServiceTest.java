@@ -5,14 +5,10 @@ import com.spring.guideance.user.dto.request.UpdateUserDto;
 import com.spring.guideance.user.dto.response.ResponseUserDto;
 import com.spring.guideance.user.repository.UserRepository;
 import com.spring.guideance.user.service.UserService;
-import com.spring.guideance.util.exception.UserException;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
+import com.spring.guideance.util.exception.UserException;import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,18 +17,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@DirtiesContext
 @Transactional
-@Rollback
 public class UserServiceTest {
 
-    @Autowired private UserService userService;
-    @Autowired private UserRepository userRepository;
-
-    @AfterEach
-    public void tearDown(){
-        userRepository.deleteAll();
-    }
+    @Autowired
+    UserService userService;
+    @Autowired
+    UserRepository userRepository;
 
     @Test
     public void 회원가입(){
