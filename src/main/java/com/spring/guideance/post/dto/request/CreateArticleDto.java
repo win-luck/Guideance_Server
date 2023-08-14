@@ -12,4 +12,12 @@ public class CreateArticleDto {
     private String title;
     private String contents;
     private List<String> tags;
+
+    public CreateArticleDto(Long userId, String title, String contents, List<String> tags) {
+        this.userId = userId;
+        this.title = title;
+        this.contents = contents;
+        this.tags = tags;
+    }
+
 }

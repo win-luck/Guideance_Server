@@ -8,4 +8,9 @@ import lombok.NoArgsConstructor;
 public class DeleteArticleDto {
     private Long userId;
     private Long articleId;
+
+    public DeleteArticleDto(Long userId, Long articleId) {
+        this.userId = userId;
+        this.articleId = articleId;
+    }
 }
