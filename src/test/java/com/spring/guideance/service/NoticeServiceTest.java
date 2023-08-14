@@ -8,12 +8,10 @@ import com.spring.guideance.user.repository.UserNoticeRepository;
 import com.spring.guideance.user.repository.UserRepository;
 import com.spring.guideance.user.service.NoticeService;
 import com.spring.guideance.user.service.UserService;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@DirtiesContext
 @Transactional
 public class NoticeServiceTest {
 
@@ -35,13 +32,6 @@ public class NoticeServiceTest {
     UserRepository userRepository;
     @Autowired
     UserNoticeRepository userNoticeRepository;
-
-    @AfterEach
-    public void tearDown(){
-        noticeRepository.deleteAll();
-        userRepository.deleteAll();
-        userNoticeRepository.deleteAll();
-    }
 
     @Test
     public void 특정유저받은알림조회(){
