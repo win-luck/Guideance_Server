@@ -18,6 +18,7 @@ import com.spring.guideance.util.exception.ResponseCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -78,8 +79,12 @@ public class ArticleService {
     }
 
     // 게시물 작성(태그 관련 로직은 추후 추가)
+    @Transactional
     public Long createArticle(CreateArticleDto articleDto) {
         Article article = Article.createArticle(articleDto);
+        User user = userRepository.findById(articleDto.getUserId()).orElseThrow(() -> new ArticleException(ResponseCode.USER_NOT_FOUND));
+        article.setUser(user);
+
         /**
          * 태그 관련 로직은 추후 추가
          */
@@ -87,13 +92,16 @@ public class ArticleService {
     }
 
     // 게시물 수정
+    @Transactional
     public void updateArticle(Long articleId, UpdateArticleDto articleDto) {
         Article article = articleAuthorCheck(articleId, articleDto.getUserId());
         // 태그는 일단 수정 불가능하도록 설정
+        article.updateArticle(articleDto);
         articleRepository.save(article);
     }
 
     // 게시물 삭제
+    @Transactional
     public void deleteArticle(Long articleId, DeleteArticleDto articleDto) {
         Article article = articleAuthorCheck(articleId, articleDto.getUserId());
         articleRepository.delete(article);
@@ -108,6 +116,7 @@ public class ArticleService {
     }
 
     // 게시물에 댓글 작성
+    @Transactional
     public Long createComment(Long articleId, CreateCommentDto commentDto) {
         Article article = articleRepository.findById(articleId).orElseThrow(() -> new ArticleException(ResponseCode.ARTICLE_NOT_FOUND));
         User user = userRepository.findById(commentDto.getUserId()).orElseThrow(() -> new ArticleException(ResponseCode.USER_NOT_FOUND));
@@ -116,6 +125,7 @@ public class ArticleService {
     }
 
     // 게시물에 댓글 수정
+    @Transactional
     public void updateComment(UpdateCommentDto commentDto) {
         Comment comment = commentAuthorCheck(commentDto.getCommentId(), commentDto.getUserId());
         comment.updateComment(commentDto.getContents());
@@ -123,6 +133,7 @@ public class ArticleService {
     }
 
     // 게시물에 댓글 삭제
+    @Transactional
     public void deleteComment(DeleteCommentDto commentDto) {
         Comment comment = commentAuthorCheck(commentDto.getCommentId(), commentDto.getUserId());
         commentRepository.delete(comment);
@@ -139,6 +150,7 @@ public class ArticleService {
     }
 
     // 게시물에 좋아요
+    @Transactional
     public Long createLikes(Long articleId, RequestLikeDto likeDto) {
         Article article = articleRepository.findById(articleId).orElseThrow(() -> new ArticleException(ResponseCode.ARTICLE_NOT_FOUND));
         User user = userRepository.findById(likeDto.getUserId()).orElseThrow(() -> new ArticleException(ResponseCode.USER_NOT_FOUND));
@@ -147,6 +159,7 @@ public class ArticleService {
     }
 
     // 게시물에 좋아요 취소
+    @Transactional
     public void deleteLikes(Long articleId, RequestLikeDto likeDto) {
         Likes likes = likesRepository.findByArticleIdAndUserId(articleId, likeDto.getUserId()).orElseThrow(() -> new ArticleException(ResponseCode.LIKE_NOT_FOUND));
         likesRepository.delete(likes);
