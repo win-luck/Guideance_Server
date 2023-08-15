@@ -1,6 +1,5 @@
 package com.spring.guideance.user.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.spring.guideance.post.domain.Article;
 import com.spring.guideance.post.domain.Comment;
 import com.spring.guideance.post.domain.Likes;
@@ -9,7 +8,6 @@ import com.spring.guideance.user.dto.request.CreateUserDto;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -55,8 +53,11 @@ public class User {
     }
 
     // 회원정보 수정
-    public void updateUser(String name) {
+    public void updateUser(String name, String profileImage) {
         this.name = name;
+        if(profileImage != null) {
+            this.profileImage = profileImage;
+        }
     }
 
     // 프로필사진 세팅
