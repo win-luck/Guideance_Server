@@ -28,4 +28,11 @@ public class Tag {
         tag.tagName = tagName;
         return tag;
     }
+
+    // 이 태그가 포함된 게시물들의 총 좋아요 합을 계싼
+    public int getTotalLikeCount() {
+        return articleTags.stream()
+                .mapToInt(articleTag -> articleTag.getArticle().getLikes().size())
+                .sum();
+    }
 }
