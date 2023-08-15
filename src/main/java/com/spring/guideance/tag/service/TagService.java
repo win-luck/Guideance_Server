@@ -69,7 +69,8 @@ public class TagService {
         Tag tag = tagRepository.findById(tagId)
                 .orElseThrow(() -> new IllegalStateException("존재하지 않는 태그입니다."));
         if(userTagRepository.findByTagIdAndUserId(tag.getId(), user.getId()).isEmpty()) throw new IllegalStateException("구독하지 않은 태그입니다.");
-        userTagRepository.delete(UserTag.createUserTag(tag, user));
+        Long id = userTagRepository.findByTagIdAndUserId(tag.getId(), user.getId()).get().getId();
+        userTagRepository.deleteById(id);
     }
 
     // 새로운 태그 생성(직접 삽입)
