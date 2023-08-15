@@ -5,15 +5,16 @@ import com.spring.guideance.user.dto.request.UpdateUserDto;
 import com.spring.guideance.user.dto.response.ResponseUserDto;
 import com.spring.guideance.user.repository.UserRepository;
 import com.spring.guideance.user.service.UserService;
-import com.spring.guideance.util.exception.UserException;import org.junit.jupiter.api.Test;
+import com.spring.guideance.util.exception.UserException;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
