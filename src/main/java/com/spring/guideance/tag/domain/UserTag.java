@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 public class UserTag { // user와 tag의 다대다 관계로 인해 생긴 중간 테이블, 유저가 구독한 태그를 관리
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_tag_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -23,4 +24,12 @@ public class UserTag { // user와 tag의 다대다 관계로 인해 생긴 중�
     private User user; // 구독한 유저
 
     private LocalDateTime createdAt;
+
+    public static UserTag createUserTag(Tag tag, User user) {
+        UserTag userTag = new UserTag();
+        userTag.tag = tag;
+        userTag.user = user;
+        userTag.createdAt = LocalDateTime.now();
+        return userTag;
+    }
 }
