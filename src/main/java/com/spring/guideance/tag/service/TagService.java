@@ -102,7 +102,7 @@ public class TagService {
         tagRepository.delete(tag);
     }
 
-    // 태그 목록 조회 (태그명, 게시물수, 구독자수) - 유저가 구독한 태그가 앞에 오도록, 가장 최신으로 구독한 태그가 앞에 오도록 정렬
+    // 유저의 태그 목록 조회 (태그명, 게시물수, 좋아요수) - 유저가 구독한 태그가 앞에 오도록, 가장 최신으로 구독한 태그가 앞에 오도록 정렬
     public List<ResponseTagDto> getTagList(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
@@ -111,10 +111,10 @@ public class TagService {
         return tagList.stream()
                 .map(tag -> {
                     boolean isSubscribed = userTagRepository.findByTagIdAndUserId(tag.getId(), user.getId()).isPresent();
-                    int subscribeCount = tag.getUserTags().size(); // 구독자 수
-                    int likeCount = tag.getArticleTags().size(); // 게시물 수
+                    int articleCount = tag.getArticleTags().size(); // 게시물 수
+                    int likeCount = tag.getTotalLikeCount(); // 좋아요 수
 
-                    ResponseTagDto responseTagDto = new ResponseTagDto(tag.getId(), tag.getTagName(), subscribeCount, likeCount);
+                    ResponseTagDto responseTagDto = new ResponseTagDto(tag.getId(), tag.getTagName(), articleCount, likeCount);
                     responseTagDto.setSubscribed(isSubscribed);
                     return responseTagDto;
                 }).sorted((tag1, tag2) -> {
@@ -155,7 +155,7 @@ public class TagService {
                 .map(articleTag -> {
                     Article article = articleTag.getArticle();
                     User user = article.getUser();
-                    int likeCount = article.getArticleTags().size(); // 좋아요 수
+                    int likeCount = article.getLikes().size(); // 좋아요 수
                     int commentCount = article.getComments().size(); // 댓글 수
                     return new ResponseSimpleArticleDto(article.getId(), article.getTitle(), article.getContents(), user.getName(), likeCount, commentCount);
                 })

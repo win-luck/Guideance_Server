@@ -60,11 +60,7 @@ public class ArticleService {
                         .map(likes -> new ResponseLikeDto(likes.getUser().getId(), likes.getArticle().getId(), likes.getCreatedAt()))
                         .collect(Collectors.toList()),
                 article.getComments().stream()
-                        .map(comment -> new ResponseCommentDto(
-                                comment.getUser().getName(),
-                                comment.getContents(),
-                                comment.getCreatedAt()
-                        ))
+                        .map(ResponseCommentDto::new)
                         .collect(Collectors.toList()),
                 article.getCreatedAt()
         );
