@@ -12,6 +12,7 @@ import com.spring.guideance.tag.service.TagService;
 import com.spring.guideance.user.domain.User;
 import com.spring.guideance.user.dto.request.CreateUserDto;
 import com.spring.guideance.user.repository.UserRepository;
+import com.spring.guideance.util.exception.TagException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +60,7 @@ public class TagServiceTest {
 
 
     // 태그명 중복 검증
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = TagException.class)
     public void 태그명중복검증(){
         // given
         String tagName = "tag1";

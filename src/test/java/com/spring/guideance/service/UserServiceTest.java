@@ -74,10 +74,10 @@ public class UserServiceTest {
 
         // when
         String newName = "newTest";
-        userService.updateUser(new UpdateUserDto(id, newName));
+        userService.updateUser(new UpdateUserDto(id, newName), null);
 
         // then
-        assertEquals(userRepository.findByEmail("1234").orElse(null).getName(), newName);
+        assertEquals(userRepository.findById(id).get().getName(), newName);
     }
 
     @Test
@@ -85,10 +85,10 @@ public class UserServiceTest {
         // given
         String name = "test";
         String email = "12345";
-        userService.createUser(new CreateUserDto(name, email));
+        Long id = userService.createUser(new CreateUserDto(name, email));
 
         // when
-        userService.deleteUser("12345");
+        userService.deleteUser(id);
 
         // then
         // 예외가 발생해야 한다.
