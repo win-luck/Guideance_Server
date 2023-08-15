@@ -35,6 +35,7 @@ public class ArticleService {
     public List<ResponseSimpleArticleDto> getArticles() {
         return articleRepository.findAll().stream()
                 .map(article -> new ResponseSimpleArticleDto(
+                        article.getId(),
                         article.getTitle(),
                         article.getContents(),
                         article.getUser().getName(),
@@ -48,9 +49,13 @@ public class ArticleService {
     public ResponseArticleDto getSingleArticle(Long articleId) {
         Article article = articleRepository.findById(articleId).orElseThrow(() -> new ArticleException(ResponseCode.ARTICLE_NOT_FOUND));
         return new ResponseArticleDto(
+                article.getId(),
                 article.getTitle(),
                 article.getContents(),
                 article.getUser().getName(),
+                article.getArticleTags().stream()
+                        .map(tag -> tag.getTag().getTagName())
+                        .collect(Collectors.toList()),
                 article.getLikes().stream()
                         .map(likes -> new ResponseLikeDto(likes.getUser().getId(), likes.getArticle().getId(), likes.getCreatedAt()))
                         .collect(Collectors.toList()),
@@ -69,6 +74,7 @@ public class ArticleService {
     public List<ResponseSimpleArticleDto> searchArticles(String keyword) {
         return articleRepository.findAllByTitleContaining(keyword).stream()
                 .map(article -> new ResponseSimpleArticleDto(
+                        article.getId(),
                         article.getTitle(),
                         article.getContents(),
                         article.getUser().getName(),

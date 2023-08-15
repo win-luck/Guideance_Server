@@ -29,6 +29,8 @@ public class User {
 
     private String email; // 이메일
 
+    private String profileImage; // 프로필 이미지
+
     @OneToMany(mappedBy = "user")
     private List<Comment> comments = new ArrayList<>();
 
@@ -55,5 +57,10 @@ public class User {
     // 회원정보 수정
     public void updateUser(String name) {
         this.name = name;
+    }
+
+    // 프로필사진 세팅
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 }
