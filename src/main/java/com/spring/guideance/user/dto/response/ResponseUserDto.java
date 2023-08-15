@@ -9,9 +9,11 @@ import lombok.NoArgsConstructor;
 public class ResponseUserDto {
     private String name;
     private String email;
+    private String profileImage;
 
     public ResponseUserDto(User user) {
         this.name = user.getName();
         this.email = user.getEmail();
+        this.profileImage = user.getProfileImage();
     }
 }
