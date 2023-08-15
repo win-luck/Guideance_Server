@@ -11,6 +11,7 @@ import com.spring.guideance.util.exception.ResponseCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +24,7 @@ public class NoticeService {
     private final UserNoticeRepository userNoticeRepository;
 
     // 알림 생성
+    @Transactional
     public Long createNotice(Long noticeId, Long userId) {
         noticeRepository.findById(noticeId).orElseThrow(() -> new NoticeException(ResponseCode.NOTICE_NOT_FOUND));
         return userNoticeRepository.save(UserNotice.createUserNotice(noticeRepository.findById(noticeId).get(), userRepository.findById(userId).get())).getId();
