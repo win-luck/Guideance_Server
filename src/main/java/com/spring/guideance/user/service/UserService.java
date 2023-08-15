@@ -1,5 +1,6 @@
 package com.spring.guideance.user.service;
 
+import com.spring.guideance.post.dto.response.ResponseCommentDto;
 import com.spring.guideance.post.dto.response.ResponseSimpleArticleDto;
 import com.spring.guideance.tag.dto.ResponseTagDto;
 import com.spring.guideance.user.domain.User;
@@ -70,14 +71,7 @@ public class UserService {
     public List<ResponseSimpleArticleDto> getUserArticles(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
         return user.getArticles().stream()
-                .map(article -> new ResponseSimpleArticleDto(
-                        article.getId(),
-                        article.getTitle(),
-                        article.getContents(),
-                        article.getUser().getName(),
-                        article.getLikes().size(),
-                        article.getComments().size()
-                ))
+                .map(ResponseSimpleArticleDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -85,12 +79,7 @@ public class UserService {
     public List<ResponseTagDto> getUserTags(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
         return user.getUserTags().stream()
-                .map(userTag -> new ResponseTagDto(
-                        userTag.getTag().getId(),
-                        userTag.getTag().getTagName(),
-                        userTag.getTag().getTotalLikeCount(),
-                        userTag.getTag().getArticleTags().size()
-                ))
+                .map(ResponseTagDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -117,18 +106,11 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    // 유저가 댓글 남긴 게시물 조회
-    public List<ResponseSimpleArticleDto> getUserCommentsArticles(Long userId) {
+    // 유저가 작성한 댓글 조회
+    public List<ResponseCommentDto> getUserComments(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
         return user.getComments().stream()
-                .map(comment -> new ResponseSimpleArticleDto(
-                        comment.getArticle().getId(),
-                        comment.getArticle().getTitle(),
-                        comment.getArticle().getContents(),
-                        comment.getArticle().getUser().getName(),
-                        comment.getArticle().getLikes().size(),
-                        comment.getArticle().getComments().size()
-                ))
+                .map(ResponseCommentDto::new)
                 .collect(Collectors.toList());
     }
 

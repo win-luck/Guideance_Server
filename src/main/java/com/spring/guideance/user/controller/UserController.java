@@ -1,5 +1,6 @@
 package com.spring.guideance.user.controller;
 
+import com.spring.guideance.post.dto.response.ResponseCommentDto;
 import com.spring.guideance.post.dto.response.ResponseSimpleArticleDto;
 import com.spring.guideance.tag.dto.ResponseTagDto;
 import com.spring.guideance.user.dto.request.CreateUserDto;
@@ -61,6 +62,12 @@ public class UserController {
         return ApiResponse.success(userService.getUserArticles(userId), ResponseCode.ARTICLE_FOUND.getMessage());
     }
 
+    // 작성한 댓글 조회
+    @GetMapping("/{userId}/comments")
+    public ApiResponse<List<ResponseCommentDto>> getComments(@PathVariable Long userId) {
+        return ApiResponse.success(userService.getUserComments(userId), ResponseCode.ARTICLE_FOUND.getMessage());
+    }
+
     // 구독한 태그 조회
     @GetMapping("/{userId}/tags")
     public ApiResponse<List<ResponseTagDto>> getTags(@PathVariable Long userId) {
@@ -79,9 +86,4 @@ public class UserController {
         return ApiResponse.success(userService.getUserLikesArticles(userId), ResponseCode.ARTICLE_FOUND.getMessage());
     }
 
-    // 댓글 쓴 게시물 조회
-    @GetMapping("/{userId}/articles/comments")
-    public ApiResponse<List<ResponseSimpleArticleDto>> getComments(@PathVariable Long userId) {
-        return ApiResponse.success(userService.getUserCommentsArticles(userId), ResponseCode.ARTICLE_FOUND.getMessage());
-    }
 }
