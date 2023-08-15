@@ -37,6 +37,7 @@ public class NoticeService {
     }
 
     // 특정 user가 받은 특정 알림 삭제
+    @Transactional
     public void deleteUserNotice(Long userNoticeId) {
         userNoticeRepository.deleteById(userNoticeId);
     }
