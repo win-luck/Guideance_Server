@@ -43,7 +43,7 @@ public class UserController {
 
     // 회원정보 수정
     @PutMapping("/{userId}/update")
-    public ApiResponse<Void> updateUser(@PathVariable Long userId, @RequestBody UpdateUserDto updateUserDto) {
+    public ApiResponse<Void> updateUser(@PathVariable Long userId, UpdateUserDto updateUserDto) {
         // 이미지 업로드 관련 S3 환경 추후 추가
         userService.updateUser(updateUserDto, null);
         return ApiResponse.success(null, ResponseCode.USER_UPDATED.getMessage());
