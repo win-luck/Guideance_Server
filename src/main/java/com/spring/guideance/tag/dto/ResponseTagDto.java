@@ -8,14 +8,14 @@ import lombok.NoArgsConstructor;
 public class ResponseTagDto {
     private Long tagId;
     private String tagName;
-    private int subscribeCount;
+    private int articleCount;
     private int likeCount;
     private boolean isSubscribed;
 
-    public ResponseTagDto(Long tagId, String tagName, int subscribeCount, int likeCount) {
+    public ResponseTagDto(Long tagId, String tagName, int articleCount, int likeCount) {
         this.tagId = tagId;
         this.tagName = tagName;
-        this.subscribeCount = subscribeCount;
+        this.articleCount = articleCount;
         this.likeCount = likeCount;
     }
 
