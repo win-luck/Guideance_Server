@@ -23,4 +23,13 @@ public class Likes {
     private User user;
 
     private LocalDateTime createdAt;
+
+    // 생성 메서드
+    public static Likes createLikes(Article article, User user) {
+        Likes likes = new Likes();
+        likes.article = article;
+        likes.user = user;
+        likes.createdAt = LocalDateTime.now();
+        return likes;
+    }
 }

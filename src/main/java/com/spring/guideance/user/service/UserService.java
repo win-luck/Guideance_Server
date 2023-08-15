@@ -46,6 +46,7 @@ public class UserService {
     public void updateUser(UpdateUserDto updateUserDto) {
         User user = userRepository.findById(updateUserDto.getUserId()).orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
         user.updateUser(updateUserDto.getUserName());
+        userRepository.save(user);
     }
 
     // 회원정보 삭제

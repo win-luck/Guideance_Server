@@ -3,15 +3,15 @@ package com.spring.guideance.post.repository;
 import com.spring.guideance.post.domain.Article;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+import java.util.Optional;
+
 public interface ArticleRepository extends JpaRepository<Article, Long> {
 
-    // 게시물 작성
+    // 태그로 게시물 검색해야하는 로직 필요
 
-    // 게시물 수정
+    // 게시물 검색 - findByTitleContaining
+    List<Article> findAllByTitleContaining(String keyword);
 
-    // 게시물 삭제
-
-    // 특정 게시물 조회
-
-    // 게시물 목록 조회
+    Optional<Article> findById(Long articleId);
 }

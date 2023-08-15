@@ -29,4 +29,23 @@ public class Comment {
     private String contents; // 댓글 내용
 
     private LocalDateTime createdAt;
+
+    // 생성 메서드
+    public static Comment createComment(String contents, User user, Article article) {
+        Comment comment = new Comment();
+        comment.contents = contents;
+        comment.user = user;
+        comment.article = article;
+        comment.createdAt = LocalDateTime.now();
+        return comment;
+    }
+
+    // 수정 메서드
+    public void updateComment(String contents) {
+        this.contents = contents;
+    }
+
+    public boolean isAuthor(User user) {
+        return this.user.equals(user);
+    }
 }

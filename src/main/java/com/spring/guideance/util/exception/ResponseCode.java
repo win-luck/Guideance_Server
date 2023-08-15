@@ -15,6 +15,9 @@ public enum ResponseCode {
     // 404 Not Found
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, false, "사용자를 찾을 수 없습니다."),
     NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND, false, "알림을 찾을 수 없습니다."),
+    ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, false, "게시글을 찾을 수 없습니다."),
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, false, "댓글을 찾을 수 없습니다."),
+    LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, false, "좋아요를 찾을 수 없습니다."),
 
     // 405 Method Not Allowed
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, false, "권한이 없습니다."),
