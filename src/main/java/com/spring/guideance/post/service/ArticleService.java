@@ -86,10 +86,6 @@ public class ArticleService {
         Article article = Article.createArticle(articleDto);
         User user = userRepository.findById(articleDto.getUserId()).orElseThrow(() -> new ArticleException(ResponseCode.USER_NOT_FOUND));
         article.setUser(user);
-
-        /**
-         * 태그 관련 로직은 추후 추가
-         */
         return articleRepository.save(article).getId();
     }
 
@@ -128,8 +124,8 @@ public class ArticleService {
 
     // 게시물에 댓글 수정
     @Transactional
-    public void updateComment(UpdateCommentDto commentDto) {
-        Comment comment = commentAuthorCheck(commentDto.getCommentId(), commentDto.getUserId());
+    public void updateComment(Long commentId, UpdateCommentDto commentDto) {
+        Comment comment = commentAuthorCheck(commentId, commentDto.getUserId());
         comment.updateComment(commentDto.getContents());
         commentRepository.save(comment);
     }
@@ -145,9 +141,7 @@ public class ArticleService {
     private Comment commentAuthorCheck(Long commentId, Long userId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ArticleException(ResponseCode.COMMENT_NOT_FOUND));
         User user = userRepository.findById(userId).orElseThrow(() -> new ArticleException(ResponseCode.USER_NOT_FOUND));
-        if (!comment.isAuthor(user)) {
-            throw new ArticleException(ResponseCode.METHOD_NOT_ALLOWED);
-        }
+        if (!comment.isAuthor(user)) throw new ArticleException(ResponseCode.METHOD_NOT_ALLOWED);
         return comment;
     }
 
