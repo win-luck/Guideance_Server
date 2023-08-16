@@ -45,7 +45,7 @@ public class ArticleController {
     public ApiResponse<Long> createArticle(@RequestBody CreateArticleDto articleDto) {
         Long articleId = articleService.createArticle(articleDto);
         tagService.addTagToArticle(articleId, articleDto.getTags());
-        // 게시물이 생성되면 게시물이 가진 태그들을 구독하는 사람들에게 Notice를 생성하여 전송하는 기능 필요
+        noticeService.sendNoticeForNewArticle(articleId); // 게시물이 가진 태그들을 구독하는 사람들에게 알림전송
         return ApiResponse.success(articleId, ResponseCode.ARTICLE_CREATED.getMessage());
     }
 
@@ -67,7 +67,7 @@ public class ArticleController {
     @PostMapping("/{articleId}/comment")
     public ApiResponse<Long> createComment(@PathVariable Long articleId, @RequestBody CreateCommentDto commentDto) {
         Long commentId = articleService.createComment(articleId, commentDto);
-        // 댓글이 작성되면 게시물 작성자에게 Notice를 생성하여 전송하는 기능 필요
+        noticeService.sendNoticeForComment(commentId); // 게시물 작성자에게 댓글 알림전송
         return ApiResponse.success(commentId, ResponseCode.COMMENT_CREATED.getMessage());
     }
 
@@ -89,7 +89,7 @@ public class ArticleController {
     @PostMapping("/{articleId}/like")
     public ApiResponse<Long> like(@PathVariable Long articleId, @RequestBody RequestLikeDto requestLikeDto) {
         Long likeId = articleService.createLikes(articleId, requestLikeDto);
-        // 좋아요가 생성되면 게시물 작성자에게 Notice를 생성하여 전송하는 기능 필요
+        noticeService.sendNoticeForLike(likeId); // 게시물 작성자에게 좋아요 알림전송
         return ApiResponse.success(likeId, ResponseCode.LIKE_CREATED.getMessage());
     }
 
