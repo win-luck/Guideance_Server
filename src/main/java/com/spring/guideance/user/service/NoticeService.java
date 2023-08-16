@@ -47,6 +47,7 @@ public class NoticeService {
         Likes likes = likesRepository.findById(likesId).orElseThrow(() -> new ArticleException(ResponseCode.LIKE_NOT_FOUND));
         User sender = likes.getUser();
         User writer = likes.getArticle().getUser();
+        if(sender.getId().equals(writer.getId())) return; // 자신이 작성한 게시물에 자신이 좋아요를 눌렀을 경우 알림 생략
         Notice notice = noticeRepository.save(Notice.createNotice(1, sender.getName(), likes.getArticle().getTitle()));
         userNoticeRepository.save(UserNotice.createUserNotice(notice, writer));
     }
@@ -59,6 +60,7 @@ public class NoticeService {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ArticleException(ResponseCode.COMMENT_NOT_FOUND));
         User sender = comment.getUser();
         User writer = comment.getArticle().getUser();
+        if(sender.getId().equals(writer.getId())) return; // 자신이 작성한 게시물에 자신이 댓글을 달았을 경우 알림 전송 생략
         Notice notice = noticeRepository.save(Notice.createNotice(2, sender.getName(), comment.getContents()));
         userNoticeRepository.save(UserNotice.createUserNotice(notice, writer));
     }
@@ -76,6 +78,7 @@ public class NoticeService {
 
             Notice notice = noticeRepository.save(Notice.createNotice(3, null, article.getTitle()));
             for (User user : userList) {
+                if(user.getId().equals(article.getUser().getId())) continue; // 자신이 구독하는 태그를 자신의 게시물에 달아 업로드한 경우 알림 전송 생략
                 userNoticeRepository.save(UserNotice.createUserNotice(notice, user));
             }
         }
