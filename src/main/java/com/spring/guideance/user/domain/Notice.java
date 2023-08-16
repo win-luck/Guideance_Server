@@ -1,5 +1,6 @@
 package com.spring.guideance.user.domain;
 
+import com.spring.guideance.util.NoticeType;
 import com.spring.guideance.util.exception.NoticeException;
 import com.spring.guideance.util.exception.ResponseCode;
 import lombok.Getter;
@@ -16,7 +17,7 @@ public class Notice {
     @Column(name = "notice_id")
     private Long id;
 
-    private int type; // 게시글에 좋아요 발생, 게시글에 댓글 발생, 구독한 태그에 새로운 게시글 등장
+    private NoticeType type; // 게시글에 좋아요 발생, 게시글에 댓글 발생, 구독한 태그에 새로운 게시글 등장
 
     private String title;
 
@@ -28,7 +29,7 @@ public class Notice {
     // 생성 메서드
     public static Notice createNotice(int type, String userName, String contents) {
         Notice notice = new Notice();
-        notice.type = type;
+        notice.type = NoticeType.findByCode(type);
         switch (type) {
             case 1:
                 notice.title = userName + "님이 내 게시물에 좋아요를 눌렀습니다.";

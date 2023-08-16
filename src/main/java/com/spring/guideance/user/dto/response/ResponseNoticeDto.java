@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ResponseNoticeDto {
     private Long id;
-    private int type;
+    private String type;
     private String title;
     private String contents;
     private LocalDateTime createdAt;
@@ -18,7 +18,7 @@ public class ResponseNoticeDto {
 
     public ResponseNoticeDto(UserNotice userNotice) {
         this.id = userNotice.getId();
-        this.type = userNotice.getNotice().getType();
+        this.type = userNotice.getNotice().getType().getDescription();
         this.title = userNotice.getNotice().getTitle();
         this.contents = userNotice.getNotice().getContents();
         this.createdAt = userNotice.getCreatedAt();
