@@ -128,8 +128,8 @@ public class ArticleService {
 
     // 게시물에 댓글 수정
     @Transactional
-    public void updateComment(UpdateCommentDto commentDto) {
-        Comment comment = commentAuthorCheck(commentDto.getCommentId(), commentDto.getUserId());
+    public void updateComment(Long commentId, UpdateCommentDto commentDto) {
+        Comment comment = commentAuthorCheck(commentId, commentDto.getUserId());
         comment.updateComment(commentDto.getContents());
         commentRepository.save(comment);
     }
