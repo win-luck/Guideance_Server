@@ -8,6 +8,7 @@ import com.spring.guideance.user.dto.request.LoginUserDto;
 import com.spring.guideance.user.dto.request.UpdateUserDto;
 import com.spring.guideance.user.dto.response.ResponseNoticeDto;
 import com.spring.guideance.user.dto.response.ResponseUserDto;
+import com.spring.guideance.user.service.NoticeService;
 import com.spring.guideance.user.service.UserService;
 import com.spring.guideance.util.api.ApiResponse;
 import com.spring.guideance.util.exception.ResponseCode;
@@ -22,6 +23,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final NoticeService noticeService;
 
     // 회원가입
     @PostMapping("/create")
@@ -84,6 +86,20 @@ public class UserController {
     @GetMapping("/{userId}/articles/likes")
     public ApiResponse<List<ResponseSimpleArticleDto>> getLikes(@PathVariable Long userId) {
         return ApiResponse.success(userService.getUserLikesArticles(userId), ResponseCode.ARTICLE_FOUND.getMessage());
+    }
+
+    // 유저가 특정 알림을 읽음
+    @PostMapping("/{userId}/notices/{noticeId}/read")
+    public ApiResponse<Void> readNotice(@PathVariable Long userId, @PathVariable Long noticeId) {
+        noticeService.readUserNotice(noticeId);
+        return ApiResponse.success(null, ResponseCode.NOTICE_READ.getMessage());
+    }
+
+    // 유저가 특정 알림을 삭제
+    @DeleteMapping("/{userId}/notices/{noticeId}/delete")
+    public ApiResponse<Void> deleteNotice(@PathVariable Long userId, @PathVariable Long noticeId) {
+        noticeService.deleteUserNotice(noticeId);
+        return ApiResponse.success(null, ResponseCode.NOTICE_DELETED.getMessage());
     }
 
 }
