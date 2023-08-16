@@ -1,11 +1,21 @@
 package com.spring.guideance.user.service;
 
+import com.spring.guideance.post.domain.Article;
+import com.spring.guideance.post.domain.Comment;
+import com.spring.guideance.post.domain.Likes;
+import com.spring.guideance.post.repository.ArticleRepository;
+import com.spring.guideance.post.repository.CommentRepository;
+import com.spring.guideance.post.repository.LikesRepository;
+import com.spring.guideance.tag.domain.ArticleTag;
+import com.spring.guideance.tag.domain.Tag;
+import com.spring.guideance.tag.domain.UserTag;
 import com.spring.guideance.user.domain.Notice;
+import com.spring.guideance.user.domain.User;
 import com.spring.guideance.user.domain.UserNotice;
 import com.spring.guideance.user.dto.response.ResponseUserDto;
 import com.spring.guideance.user.repository.NoticeRepository;
 import com.spring.guideance.user.repository.UserNoticeRepository;
-import com.spring.guideance.user.repository.UserRepository;
+import com.spring.guideance.util.exception.ArticleException;
 import com.spring.guideance.util.exception.NoticeException;
 import com.spring.guideance.util.exception.ResponseCode;
 import lombok.RequiredArgsConstructor;
@@ -19,20 +29,57 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class NoticeService {
 
-    private final UserRepository userRepository;
+    private final ArticleRepository articleRepository;
+    private final CommentRepository commentRepository;
+    private final LikesRepository likesRepository;
     private final NoticeRepository noticeRepository;
     private final UserNoticeRepository userNoticeRepository;
-
 
     /**
      * 알림 생성+전송 기능
      */
 
     // 특정 게시물의 주인 user에게 누군가 좋아요를 눌렀음을 알림
+    // ???님이 내 게시물에 좋아요를 눌렀습니다.
+    // [게시물 제목]
+    @Transactional
+    public void sendNoticeForLike(Long likesId) {
+        Likes likes = likesRepository.findById(likesId).orElseThrow(() -> new ArticleException(ResponseCode.LIKE_NOT_FOUND));
+        User sender = likes.getUser();
+        User writer = likes.getArticle().getUser();
+        Notice notice = noticeRepository.save(Notice.createNotice(1, sender.getName(), likes.getArticle().getTitle()));
+        userNoticeRepository.save(UserNotice.createUserNotice(notice, writer));
+    }
 
     // 특정 게시물의 주인 user에게 누군가 댓글을 달았음을 알림
+    // ???님이 내 게시물에 댓글을 남겼습니다.
+    // [댓글 내용]
+    @Transactional
+    public void sendNoticeForComment(Long commentId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ArticleException(ResponseCode.COMMENT_NOT_FOUND));
+        User sender = comment.getUser();
+        User writer = comment.getArticle().getUser();
+        Notice notice = noticeRepository.save(Notice.createNotice(2, sender.getName(), comment.getContents()));
+        userNoticeRepository.save(UserNotice.createUserNotice(notice, writer));
+    }
 
-    // 특정 태그를 구독 중인 user들에게 새 게시물이 추가되었음을 알림
+    // 한 게시물의 태그를 순회하며 이를 구독 중인 다수 user들에게 새 게시물이 추가되었음을 알림
+    // 구독 중인 [???] 태그에 새 게시물이 추가되었습니다.
+    // [게시물 제목]
+    @Transactional
+    public void sendNoticeForNewArticle(Long articleId) {
+        Article article = articleRepository.findById(articleId).orElseThrow(() -> new ArticleException(ResponseCode.ARTICLE_NOT_FOUND));
+        List<Tag> tagList = article.getArticleTags().stream().map(ArticleTag::getTag).collect(Collectors.toList());
+
+        for (Tag tag : tagList) {
+            List<User> userList = tag.getUserTags().stream().map(UserTag::getUser).collect(Collectors.toList());
+
+            Notice notice = noticeRepository.save(Notice.createNotice(3, null, article.getTitle()));
+            for (User user : userList) {
+                userNoticeRepository.save(UserNotice.createUserNotice(notice, user));
+            }
+        }
+    }
 
     /**
      * 알림 조회/삭제/읽음 관련 기능
