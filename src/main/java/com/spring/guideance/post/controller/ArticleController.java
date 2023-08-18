@@ -9,9 +9,9 @@ import com.spring.guideance.user.service.NoticeService;
 import com.spring.guideance.util.api.ApiResponse;
 import com.spring.guideance.util.exception.ResponseCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/article")
@@ -22,10 +22,10 @@ public class ArticleController {
     private final TagService tagService;
     private final NoticeService noticeService;
 
-    // 게시물 목록 조회 (제목, 내용, 작성자, 좋아요 수, 댓글 수)
+    // 게시물 목록 조회 (제목, 내용, 작성자, 좋아요 수, 댓글 수) (페이징)
     @GetMapping
-    public ApiResponse<List<ResponseSimpleArticleDto>> getArticles() {
-        return ApiResponse.success(articleService.getArticles(), ResponseCode.ARTICLE_FOUND.getMessage());
+    public ApiResponse<Page<ResponseSimpleArticleDto>> getArticles(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
+        return ApiResponse.success(articleService.getArticles(PageRequest.of(page, size)), ResponseCode.ARTICLE_FOUND.getMessage());
     }
 
     // 특정 게시물 정보 조회 (제목, 내용, 댓글 목록, 좋아요 목록, 작성자, 작성일시)
@@ -34,10 +34,10 @@ public class ArticleController {
         return ApiResponse.success(articleService.getSingleArticle(articleId), ResponseCode.ARTICLE_FOUND.getMessage());
     }
 
-    // 게시물 검색
+    // 게시물 검색 결과 조회 (페이징)
     @GetMapping("/search/{articleName}")
-    public ApiResponse<List<ResponseSimpleArticleDto>> searchArticles(@PathVariable String articleName) {
-        return ApiResponse.success(articleService.searchArticles(articleName), ResponseCode.ARTICLE_FOUND.getMessage());
+    public ApiResponse<Page<ResponseSimpleArticleDto>> searchArticles(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size, @PathVariable String articleName) {
+        return ApiResponse.success(articleService.searchArticles(articleName, PageRequest.of(page, size)), ResponseCode.ARTICLE_FOUND.getMessage());
     }
 
     // 게시물 작성
@@ -79,9 +79,9 @@ public class ArticleController {
     }
 
     // 게시물에 댓글 삭제
-    @DeleteMapping("/comment/{commentId}")
+    @DeleteMapping("/comment/{commentId}/delete")
     public ApiResponse<Void> deleteComment(@PathVariable Long commentId, @RequestBody DeleteCommentDto commentDto) {
-        articleService.deleteComment(commentDto);
+        articleService.deleteComment(commentId, commentDto.getUserId());
         return ApiResponse.success(null, ResponseCode.COMMENT_DELETED.getMessage());
     }
 

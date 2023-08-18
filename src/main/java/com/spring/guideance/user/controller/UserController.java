@@ -13,6 +13,8 @@ import com.spring.guideance.user.service.UserService;
 import com.spring.guideance.util.api.ApiResponse;
 import com.spring.guideance.util.exception.ResponseCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -58,16 +60,16 @@ public class UserController {
         return ApiResponse.success(null, ResponseCode.USER_DELETED.getMessage());
     }
 
-    // 작성한 게시물 조회
+    // 작성한 게시물 조회 (페이징)
     @GetMapping("/{userId}/articles/writes")
-    public ApiResponse<List<ResponseSimpleArticleDto>> getArticles(@PathVariable Long userId) {
-        return ApiResponse.success(userService.getUserArticles(userId), ResponseCode.ARTICLE_FOUND.getMessage());
+    public ApiResponse<Page<ResponseSimpleArticleDto>> getArticles(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @PathVariable Long userId) {
+        return ApiResponse.success(userService.getUserArticles(userId, PageRequest.of(page, size)), ResponseCode.ARTICLE_FOUND.getMessage());
     }
 
-    // 작성한 댓글 조회
+    // 작성한 댓글 조회 (페이징)
     @GetMapping("/{userId}/comments")
-    public ApiResponse<List<ResponseCommentDto>> getComments(@PathVariable Long userId) {
-        return ApiResponse.success(userService.getUserComments(userId), ResponseCode.ARTICLE_FOUND.getMessage());
+    public ApiResponse<Page<ResponseCommentDto>> getComments(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @PathVariable Long userId) {
+        return ApiResponse.success(userService.getUserComments(userId, PageRequest.of(page, size)), ResponseCode.ARTICLE_FOUND.getMessage());
     }
 
     // 구독한 태그 조회
@@ -76,16 +78,16 @@ public class UserController {
         return ApiResponse.success(userService.getUserTags(userId), ResponseCode.TAG_FOUND.getMessage());
     }
 
-    // 수신한 알림 조회
+    // 수신한 알림 조회 (페이징)
     @GetMapping("/{userId}/notices")
-    public ApiResponse<List<ResponseNoticeDto>> getNotices(@PathVariable Long userId) {
-        return ApiResponse.success(userService.getUserNotices(userId), ResponseCode.NOTICE_FOUND.getMessage());
+    public ApiResponse<Page<ResponseNoticeDto>> getNotices(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @PathVariable Long userId) {
+        return ApiResponse.success(userService.getUserNotices(userId, PageRequest.of(page, size)), ResponseCode.NOTICE_FOUND.getMessage());
     }
 
-    // 좋아요 누른 게시물 조회
+    // 좋아요 누른 게시물 조회 (페이징)
     @GetMapping("/{userId}/articles/likes")
-    public ApiResponse<List<ResponseSimpleArticleDto>> getLikes(@PathVariable Long userId) {
-        return ApiResponse.success(userService.getUserLikesArticles(userId), ResponseCode.ARTICLE_FOUND.getMessage());
+    public ApiResponse<Page<ResponseSimpleArticleDto>> getLikes(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @PathVariable Long userId) {
+        return ApiResponse.success(userService.getUserLikesArticles(userId, PageRequest.of(page, size)), ResponseCode.ARTICLE_FOUND.getMessage());
     }
 
     // 유저가 특정 알림을 읽음
