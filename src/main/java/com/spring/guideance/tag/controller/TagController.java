@@ -8,6 +8,8 @@ import com.spring.guideance.user.dto.response.ResponseUserDto;
 import com.spring.guideance.util.api.ApiResponse;
 import com.spring.guideance.util.exception.ResponseCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,10 +36,16 @@ public class TagController {
         return ApiResponse.success(null, ResponseCode.TAG_DELETED.getMessage());
     }
 
-    // 태그 검색
+    // 태그 검색 결과 조회 (페이징)
     @GetMapping("/search/{tagName}")
-    public ApiResponse<List<ResponseTagDto>> searchTag(@PathVariable String tagName) {
-        return ApiResponse.success(tagService.searchTag(tagName), ResponseCode.TAG_FOUND.getMessage());
+    public ApiResponse<Page<ResponseTagDto>> searchTag(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size, @PathVariable String tagName) {
+        return ApiResponse.success(tagService.searchTag(tagName, PageRequest.of(page, size)), ResponseCode.TAG_FOUND.getMessage());
+    }
+
+    // 태그 목록 조회 (태그명, 게시물수, 좋아요수) - 유저가 구독한 태그가 앞에 오도록, 가장 최신으로 구독한 태그가 앞에 오도록 정렬 (페이징)
+    @GetMapping("/list/{userId}")
+    public ApiResponse<Page<ResponseTagDto>> getTagList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size, @PathVariable Long userId) {
+        return ApiResponse.success(tagService.getTagList(userId, PageRequest.of(page, size)), ResponseCode.TAG_FOUND.getMessage());
     }
 
     // 유저가 태그를 구독
@@ -54,22 +62,15 @@ public class TagController {
         return ApiResponse.success(null, ResponseCode.TAG_UNSUBSCRIBED.getMessage());
     }
 
-    // 특정 태그가 포함된 게시물 목록 조회
+    // 특정 태그가 포함된 게시물 목록 조회 (관리자용)
     @GetMapping("/{tagId}/articles")
     public ApiResponse<List<ResponseSimpleArticleDto>> getArticleListByTag(@PathVariable Long tagId) {
         return ApiResponse.success(tagService.getArticleListByTag(tagId), ResponseCode.ARTICLE_FOUND.getMessage());
     }
 
-    // 특정 태그를 구독하는 유저 목록 조회
+    // 특정 태그를 구독하는 유저 목록 조회 (관리자용)
     @GetMapping("/{tagId}/users")
     public ApiResponse<List<ResponseUserDto>> getUserListByTag(@PathVariable Long tagId) {
         return ApiResponse.success(tagService.getUserListByTag(tagId), ResponseCode.USER_FOUND.getMessage());
     }
-
-    // 전체 태그 목록 조회 (태그명, 게시물수, 좋아요수) - 유저가 구독한 태그가 앞에 오도록, 가장 최신으로 구독한 태그가 앞에 오도록 정렬
-    @GetMapping("/list/{userId}")
-    public ApiResponse<List<ResponseTagDto>> getTagList(@PathVariable Long userId) {
-        return ApiResponse.success(tagService.getTagList(userId), ResponseCode.TAG_FOUND.getMessage());
-    }
-
 }

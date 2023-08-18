@@ -18,6 +18,9 @@ import com.spring.guideance.util.exception.ArticleException;
 import com.spring.guideance.util.exception.TagException;
 import com.spring.guideance.util.exception.UserException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -102,13 +105,13 @@ public class TagService {
         tagRepository.delete(tag);
     }
 
-    // 유저의 태그 목록 조회 (태그명, 게시물수, 좋아요수) - 유저가 구독한 태그가 앞에 오도록, 가장 최신으로 구독한 태그가 앞에 오도록 정렬
-    public List<ResponseTagDto> getTagList(Long userId) {
+    // 태그 목록 조회 (태그명, 게시물수, 좋아요수) (페이징)
+    public Page<ResponseTagDto> getTagList(Long userId, Pageable pageable) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
         List<Tag> tagList = tagRepository.findAll();
 
-        return tagList.stream()
+        List<ResponseTagDto> dtoList = tagList.stream()
                 .map(tag -> {
                     boolean isSubscribed = userTagRepository.findByTagIdAndUserId(tag.getId(), user.getId()).isPresent();
                     int articleCount = tag.getArticleTags().size(); // 게시물 수
@@ -134,15 +137,19 @@ public class TagService {
                         }
                     }
                 }).collect(Collectors.toList());
+
+        return new PageImpl<>(dtoList, pageable, dtoList.size());
     }
 
-    // 태그 검색
-    public List<ResponseTagDto> searchTag(String tagName) {
-        List<Tag> tagList = tagRepository.findByTagNameContaining(tagName);
+    // 태그 검색 결과 조회 (페이징)
+    public Page<ResponseTagDto> searchTag(String tagName, Pageable pageable) {
+        Page<Tag> tagList = tagRepository.findByTagNameContaining(tagName, pageable);
 
-        return tagList.stream()
-                .map(tag -> new ResponseTagDto(tag.getId(), tag.getTagName(), tag.getUserTags().size(), tag.getArticleTags().size()))
-                .collect(Collectors.toList());
+        return tagList.map(tag -> {
+            int articleCount = tag.getArticleTags().size(); // 게시물 수
+            int likeCount = tag.getTotalLikeCount(); // 좋아요 수
+            return new ResponseTagDto(tag.getId(), tag.getTagName(), articleCount, likeCount);
+        });
     }
 
     // 특정 태그가 포함된 게시물 목록 조회
