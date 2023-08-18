@@ -16,10 +16,11 @@ import com.spring.guideance.user.repository.UserRepository;
 import com.spring.guideance.util.exception.ArticleException;
 import com.spring.guideance.util.exception.ResponseCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,18 +32,10 @@ public class ArticleService {
     private final LikesRepository likesRepository;
     private final UserRepository userRepository;
 
-    // 게시물 목록 조회 (제목, 내용, 작성자, 좋아요 수, 댓글 수)
-    public List<ResponseSimpleArticleDto> getArticles() {
-        return articleRepository.findAll().stream()
-                .map(article -> new ResponseSimpleArticleDto(
-                        article.getId(),
-                        article.getTitle(),
-                        article.getContents(),
-                        article.getUser().getName(),
-                        article.getLikes().size(),
-                        article.getComments().size()
-                ))
-                .collect(Collectors.toList());
+    // 게시물 목록 조회 (제목, 내용, 작성자, 좋아요 수, 댓글 수) (페이징)
+    public Page<ResponseSimpleArticleDto> getArticles(Pageable pageable) {
+        return articleRepository.findAllByOrderByCreatedAtDesc(pageable)
+                .map(ResponseSimpleArticleDto::new);
     }
 
     // 특정 게시물 정보 조회 (제목, 내용, 댓글 목록, 좋아요 목록, 작성자, 작성일시)
@@ -66,18 +59,10 @@ public class ArticleService {
         );
     }
 
-    // 게시물 검색
-    public List<ResponseSimpleArticleDto> searchArticles(String keyword) {
-        return articleRepository.findAllByTitleContaining(keyword).stream()
-                .map(article -> new ResponseSimpleArticleDto(
-                        article.getId(),
-                        article.getTitle(),
-                        article.getContents(),
-                        article.getUser().getName(),
-                        article.getLikes().size(),
-                        article.getComments().size()
-                ))
-                .collect(Collectors.toList());
+    // 게시물 검색 결과 조회 (페이징)
+    public Page<ResponseSimpleArticleDto> searchArticles(String keyword, Pageable pageable) {
+        return articleRepository.findAllByTitleContaining(keyword, pageable)
+                .map(ResponseSimpleArticleDto::new);
     }
 
     // 게시물 작성(태그 관련 로직은 추후 추가)
@@ -132,8 +117,8 @@ public class ArticleService {
 
     // 게시물에 댓글 삭제
     @Transactional
-    public void deleteComment(DeleteCommentDto commentDto) {
-        Comment comment = commentAuthorCheck(commentDto.getCommentId(), commentDto.getUserId());
+    public void deleteComment(Long commentId, Long userId) {
+        Comment comment = commentAuthorCheck(commentId, userId);
         commentRepository.delete(comment);
     }
 
