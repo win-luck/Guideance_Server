@@ -150,6 +150,7 @@ public class ArticleService {
     public Long createLikes(Long articleId, RequestLikeDto likeDto) {
         Article article = articleRepository.findById(articleId).orElseThrow(() -> new ArticleException(ResponseCode.ARTICLE_NOT_FOUND));
         User user = userRepository.findById(likeDto.getUserId()).orElseThrow(() -> new ArticleException(ResponseCode.USER_NOT_FOUND));
+        if(likesRepository.findByArticleIdAndUserId(articleId, likeDto.getUserId()).isPresent()) throw new ArticleException(ResponseCode.LIKE_ALREADY_EXISTS);
         Likes likes = Likes.createLikes(article, user);
         return likesRepository.save(likes).getId();
     }

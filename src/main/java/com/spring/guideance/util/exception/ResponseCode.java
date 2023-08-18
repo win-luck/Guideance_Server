@@ -29,6 +29,8 @@ public enum ResponseCode {
     TAG_ALREADY_EXISTS(HttpStatus.CONFLICT, false, "이미 존재하는 태그입니다."),
     TAG_ALREADY_SUBSCRIBED(HttpStatus.CONFLICT, false, "이미 구독한 태그입니다."),
     USER_ALREADY_EXISTS(HttpStatus.CONFLICT, false, "이미 존재하는 사용자입니다."),
+    LIKE_ALREADY_EXISTS(HttpStatus.CONFLICT, false, "이미 좋아요를 누른 게시글입니다."),
+    LIKE_ALREADY_CANCELED(HttpStatus.CONFLICT, false, "이미 좋아요를 취소한 게시글입니다."),
 
     // 500 Internal Server Error
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, false, "서버에 오류가 발생하였습니다."),
