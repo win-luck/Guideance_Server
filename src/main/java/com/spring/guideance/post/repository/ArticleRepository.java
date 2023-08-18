@@ -16,4 +16,8 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 
     // 최신 게시물이 앞에 오도록 정렬하여 조회 (페이징)
     Page<Article> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
+    Page<Article> findByUserIdOrderByCreatedAtDesc(Long userId, Pageable pageable);
+
+    Page<Article> findAllByLikesUserIdOrderByCreatedAtDesc(Long userId, Pageable pageable);
 }

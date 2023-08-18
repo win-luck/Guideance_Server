@@ -2,16 +2,21 @@ package com.spring.guideance.user.service;
 
 import com.spring.guideance.post.dto.response.ResponseCommentDto;
 import com.spring.guideance.post.dto.response.ResponseSimpleArticleDto;
+import com.spring.guideance.post.repository.ArticleRepository;
+import com.spring.guideance.post.repository.CommentRepository;
 import com.spring.guideance.tag.dto.ResponseTagDto;
 import com.spring.guideance.user.domain.User;
 import com.spring.guideance.user.dto.request.CreateUserDto;
 import com.spring.guideance.user.dto.request.UpdateUserDto;
 import com.spring.guideance.user.dto.response.ResponseNoticeDto;
 import com.spring.guideance.user.dto.response.ResponseUserDto;
+import com.spring.guideance.user.repository.UserNoticeRepository;
 import com.spring.guideance.user.repository.UserRepository;
 import com.spring.guideance.util.exception.ResponseCode;
 import com.spring.guideance.util.exception.UserException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -23,6 +28,9 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ArticleRepository articleRepository;
+    private final CommentRepository commentRepository;
+    private final UserNoticeRepository userNoticeRepository;
 
     // 회원가입
     @Transactional
@@ -67,12 +75,11 @@ public class UserService {
         userRepository.deleteById(user.getId());
     }
 
-    // 유저가 작성한 게시물 조회
-    public List<ResponseSimpleArticleDto> getUserArticles(Long userId) {
+    // 유저가 작성한 게시물 조회 (페이징)
+    public Page<ResponseSimpleArticleDto> getUserArticles(Long userId, Pageable pageable) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
-        return user.getArticles().stream()
-                .map(ResponseSimpleArticleDto::new)
-                .collect(Collectors.toList());
+        return articleRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable)
+                .map(ResponseSimpleArticleDto::new);
     }
 
     // 유저가 구독한 태그 조회
@@ -83,35 +90,25 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    // 유저가 수신한 알림 조회
-    public List<ResponseNoticeDto> getUserNotices(Long userId) {
+    // 유저가 수신한 알림 조회 (페이징)
+    public Page<ResponseNoticeDto> getUserNotices(Long userId, Pageable pageable) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
-        return user.getUserNotices().stream()
-                .map(ResponseNoticeDto::new)
-                .collect(Collectors.toList());
+        return userNoticeRepository.findAllByUserIdOrderByCreatedAtDesc(userId, pageable)
+                .map(ResponseNoticeDto::new);
     }
 
-    // 유저가 좋아요 누른 게시물 조회
-    public List<ResponseSimpleArticleDto> getUserLikesArticles(Long userId) {
+    // 유저가 좋아요 누른 게시물 조회 (페이징)
+    public Page<ResponseSimpleArticleDto> getUserLikesArticles(Long userId, Pageable pageable) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
-        return user.getLikes().stream()
-                .map(articleLike -> new ResponseSimpleArticleDto(
-                        articleLike.getArticle().getId(),
-                        articleLike.getArticle().getTitle(),
-                        articleLike.getArticle().getContents(),
-                        articleLike.getArticle().getUser().getName(),
-                        articleLike.getArticle().getLikes().size(),
-                        articleLike.getArticle().getComments().size()
-                ))
-                .collect(Collectors.toList());
+        return articleRepository.findAllByLikesUserIdOrderByCreatedAtDesc(userId, pageable)
+                .map(ResponseSimpleArticleDto::new);
     }
 
-    // 유저가 작성한 댓글 조회
-    public List<ResponseCommentDto> getUserComments(Long userId) {
+    // 유저가 작성한 댓글 조회 (페이징)
+    public Page<ResponseCommentDto> getUserComments(Long userId, Pageable pageable) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
-        return user.getComments().stream()
-                .map(ResponseCommentDto::new)
-                .collect(Collectors.toList());
+        return commentRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable)
+                .map(ResponseCommentDto::new);
     }
 
 }
