@@ -1,6 +1,6 @@
 package com.spring.guideance.user.domain;
 
-import com.spring.guideance.util.NoticeType;
+import com.spring.guideance.user.NoticeType;
 import com.spring.guideance.util.exception.NoticeException;
 import com.spring.guideance.util.exception.ResponseCode;
 import lombok.AccessLevel;
