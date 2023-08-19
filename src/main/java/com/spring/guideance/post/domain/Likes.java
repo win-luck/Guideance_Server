@@ -4,6 +4,7 @@ import com.spring.guideance.user.domain.User;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -24,6 +25,7 @@ public class Likes {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @CreatedDate
     private LocalDateTime createdAt;
 
     // 생성 메서드
@@ -31,7 +33,6 @@ public class Likes {
         Likes likes = new Likes();
         likes.article = article;
         likes.user = user;
-        likes.createdAt = LocalDateTime.now();
         return likes;
     }
 }

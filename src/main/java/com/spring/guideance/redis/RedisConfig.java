@@ -1,4 +1,4 @@
-package com.spring.guideance;
+package com.spring.guideance.redis;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

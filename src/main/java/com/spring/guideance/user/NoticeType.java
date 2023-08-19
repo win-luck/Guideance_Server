@@ -1,4 +1,4 @@
-package com.spring.guideance.util;
+package com.spring.guideance.user;
 
 public enum NoticeType {
     LIKE(1, "Like"),

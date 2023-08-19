@@ -11,5 +11,4 @@ public class RequestLikeDto {
     public RequestLikeDto(Long userId) {
         this.userId = userId;
     }
-
 }
