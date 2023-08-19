@@ -1,7 +1,6 @@
 package com.spring.guideance;
 
-import com.spring.guideance.user.domain.User;
-import org.junit.jupiter.api.Test;
+import com.spring.guideance.redis.UserRedisRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 

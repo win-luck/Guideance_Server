@@ -1,4 +1,4 @@
-package com.spring.guideance;
+package com.spring.guideance.redis;
 
 import com.spring.guideance.user.domain.User;
 import org.springframework.data.repository.CrudRepository;
