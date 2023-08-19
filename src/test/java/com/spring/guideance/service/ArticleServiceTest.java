@@ -18,6 +18,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,14 +67,16 @@ public class ArticleServiceTest {
     public void 게시물목록조회(){
         // given
         User user = User.createUser(new CreateUserDto("test", "test"));
+        userRepository.save(user);
         Article article = Article.createArticle(new CreateArticleDto(user.getId(), "test", "test", new ArrayList<>()));
-        Long userId = userRepository.save(user).getId();
         article.setUser(user);
-        Long articleId = articleRepository.save(article).getId();
+        articleRepository.save(article);
 
         // when
-        List<ResponseSimpleArticleDto> responseArticleDtoList = articleService.getArticles();
-        assertEquals(responseArticleDtoList.get(0).getTitle(), "test");
+        Page<ResponseSimpleArticleDto> responseArticleDtoList = articleService.getArticles(PageRequest.of(0, 10));
+
+        // then
+        assertEquals(responseArticleDtoList.getContent().get(0).getTitle(), "test");
     }
 
     @Test
@@ -150,7 +154,7 @@ public class ArticleServiceTest {
 
         // when
         Long commentId = articleService.createComment(articleId, new CreateCommentDto(userId,"test2"));
-        articleService.updateComment(new UpdateCommentDto(userId, commentId, "test3"));
+        articleService.updateComment(commentId, new UpdateCommentDto(userId, "test3"));
 
         // then
         assertEquals(commentRepository.findById(commentId).get().getContents(), "test3");
@@ -167,7 +171,7 @@ public class ArticleServiceTest {
 
         // when
         Long commentId = articleService.createComment(articleId, new CreateCommentDto(userId,"test2"));
-        articleService.deleteComment(new DeleteCommentDto(userId, commentId));
+        articleService.deleteComment(commentId, userId);
 
         // then
         assertNull(commentRepository.findById(commentId).orElse(null));

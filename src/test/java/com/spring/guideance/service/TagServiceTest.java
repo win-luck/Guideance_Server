@@ -5,6 +5,7 @@ import com.spring.guideance.post.dto.request.CreateArticleDto;
 import com.spring.guideance.post.repository.ArticleRepository;
 import com.spring.guideance.tag.domain.ArticleTag;
 import com.spring.guideance.tag.domain.Tag;
+import com.spring.guideance.tag.dto.ResponseTagDto;
 import com.spring.guideance.tag.repository.ArticleTagRepository;
 import com.spring.guideance.tag.repository.TagRepository;
 import com.spring.guideance.tag.repository.UserTagRepository;
@@ -17,6 +18,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -134,10 +137,10 @@ public class TagServiceTest {
         tagService.createTag(tagName3);
 
         // when
-        int tagCount = tagService.getTagList(userId).size();
+        Page<ResponseTagDto> tags = tagService.getTagList(userId, PageRequest.of(0, 10));
 
         // then
-        assertEquals(3, tagCount);
+        assertEquals(3, tags.getTotalElements());
     }
 
     // 태그 검색
@@ -152,10 +155,10 @@ public class TagServiceTest {
         tagService.createTag(tagName3);
 
         // when
-        int tagCount = tagService.searchTag("tag").size();
+        Page<ResponseTagDto> tags = tagService.searchTag("tag", PageRequest.of(0, 10));
 
         // then
-        assertEquals(3, tagCount);
+        assertEquals(3, tags.getTotalElements());
     }
 
     // 특정 태그가 포함된 게시물 목록 조회
