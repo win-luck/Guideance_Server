@@ -94,7 +94,7 @@ public class ArticleService {
     private Article articleAuthorCheck(Long articleId, Long userId) {
         Article article = articleRepository.findById(articleId).orElseThrow(() -> new ArticleException(ResponseCode.ARTICLE_NOT_FOUND));
         User user = userRepository.findById(userId).orElseThrow(() -> new ArticleException(ResponseCode.USER_NOT_FOUND));
-        if (!article.isAuthor(user)) throw new ArticleException(ResponseCode.METHOD_NOT_ALLOWED);
+        if (!article.isAuthor(user)) throw new ArticleException(ResponseCode.FORBIDDEN);
         return article;
     }
 
@@ -126,7 +126,7 @@ public class ArticleService {
     private Comment commentAuthorCheck(Long commentId, Long userId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ArticleException(ResponseCode.COMMENT_NOT_FOUND));
         User user = userRepository.findById(userId).orElseThrow(() -> new ArticleException(ResponseCode.USER_NOT_FOUND));
-        if (!comment.isAuthor(user)) throw new ArticleException(ResponseCode.METHOD_NOT_ALLOWED);
+        if (!comment.isAuthor(user)) throw new ArticleException(ResponseCode.FORBIDDEN);
         return comment;
     }
 

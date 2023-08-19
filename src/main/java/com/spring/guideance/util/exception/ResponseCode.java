@@ -14,6 +14,9 @@ public enum ResponseCode {
     UNSUBSCRIBE_TAG(HttpStatus.BAD_REQUEST, false, "구독하지 않은 태그입니다."),
     NOTICE_TYPE_WRONG(HttpStatus.BAD_REQUEST, false, "알림을 찾을 수 없습니다."),
 
+    // 403 Forbidden
+    FORBIDDEN(HttpStatus.FORBIDDEN, false, "권한이 없습니다."),
+
     // 404 Not Found
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, false, "사용자를 찾을 수 없습니다."),
     NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND, false, "알림을 찾을 수 없습니다."),
@@ -23,7 +26,7 @@ public enum ResponseCode {
     TAG_NOT_FOUND(HttpStatus.NOT_FOUND, false, "태그를 찾을 수 없습니다."),
 
     // 405 Method Not Allowed
-    METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, false, "권한이 없습니다."),
+    METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, false, "허용되지 않은 메소드입니다."),
 
     // 409 Conflict
     TAG_ALREADY_EXISTS(HttpStatus.CONFLICT, false, "이미 존재하는 태그입니다."),
