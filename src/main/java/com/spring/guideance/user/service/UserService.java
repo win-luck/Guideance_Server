@@ -36,7 +36,7 @@ public class UserService {
     @Transactional
     public Long createUser(CreateUserDto createUserDto) {
         ValidateDuplicateUser(createUserDto);
-        return userRepository.save(User.createUser(createUserDto)).getId();
+        return userRepository.save(User.createUser(createUserDto.getName(), createUserDto.getEmail())).getId();
     }
 
     // 중복 이메일 체크
