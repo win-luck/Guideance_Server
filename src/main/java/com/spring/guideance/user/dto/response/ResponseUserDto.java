@@ -2,7 +2,6 @@ package com.spring.guideance.user.dto.response;
 
 import com.spring.guideance.user.domain.User;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 public class ResponseUserDto {
