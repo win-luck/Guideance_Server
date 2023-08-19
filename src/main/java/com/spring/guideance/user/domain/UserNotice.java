@@ -3,13 +3,12 @@ package com.spring.guideance.user.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Setter @Getter
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserNotice {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

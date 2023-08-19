@@ -3,15 +3,17 @@ package com.spring.guideance.user.domain;
 import com.spring.guideance.util.NoticeType;
 import com.spring.guideance.util.exception.NoticeException;
 import com.spring.guideance.util.exception.ResponseCode;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter @Setter
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Notice {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "notice_id")
