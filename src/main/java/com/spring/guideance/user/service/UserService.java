@@ -41,10 +41,9 @@ public class UserService {
 
     // 중복 이메일 체크
     private void ValidateDuplicateUser(CreateUserDto createUserDto) {
-        userRepository.findByEmail(createUserDto.getEmail())
-                .ifPresent(user -> {
-                    throw new UserException(ResponseCode.USER_ALREADY_EXISTS);
-                });
+        if(userRepository.existsByEmail(createUserDto.getEmail())) {
+            throw new UserException(ResponseCode.USER_ALREADY_EXISTS);
+        }
     }
 
     // 로그인
