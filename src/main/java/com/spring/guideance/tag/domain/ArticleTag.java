@@ -1,13 +1,15 @@
 package com.spring.guideance.tag.domain;
 
 import com.spring.guideance.post.domain.Article;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
-@Getter @Setter
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ArticleTag { // article과 tag의 다대다 관계로 인해 생긴 중간 테이블, 게시물이 담고 있는 태그를 관리
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "article_tag_id")

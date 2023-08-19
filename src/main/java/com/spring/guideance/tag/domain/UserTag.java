@@ -1,14 +1,16 @@
 package com.spring.guideance.tag.domain;
 
 import com.spring.guideance.user.domain.User;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter @Setter
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserTag { // user와 tag의 다대다 관계로 인해 생긴 중간 테이블, 유저가 구독한 태그를 관리
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
