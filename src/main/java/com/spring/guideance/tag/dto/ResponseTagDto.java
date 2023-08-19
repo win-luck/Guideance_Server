@@ -2,10 +2,8 @@ package com.spring.guideance.tag.dto;
 
 import com.spring.guideance.tag.domain.UserTag;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 public class ResponseTagDto {
     private Long tagId;
     private String tagName;
@@ -13,14 +11,14 @@ public class ResponseTagDto {
     private int likeCount;
     private boolean isSubscribed;
 
-    public ResponseTagDto(Long tagId, String tagName, int articleCount, int likeCount) {
+    private ResponseTagDto(Long tagId, String tagName, int articleCount, int likeCount) {
         this.tagId = tagId;
         this.tagName = tagName;
         this.articleCount = articleCount;
         this.likeCount = likeCount;
     }
 
-    public ResponseTagDto(UserTag userTag) {
+    private ResponseTagDto(UserTag userTag) {
         this.tagId = userTag.getTag().getId();
         this.tagName = userTag.getTag().getTagName();
         this.articleCount = userTag.getTag().getTotalLikeCount();
@@ -29,5 +27,13 @@ public class ResponseTagDto {
 
     public void setSubscribed(boolean isSubscribed) {
         this.isSubscribed = isSubscribed;
+    }
+
+    public static ResponseTagDto from(UserTag userTag) {
+        return new ResponseTagDto(userTag);
+    }
+
+    public static ResponseTagDto of(Long tagId, String tagName, int articleCount, int likeCount) {
+        return new ResponseTagDto(tagId, tagName, articleCount, likeCount);
     }
 }

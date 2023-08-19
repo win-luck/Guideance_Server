@@ -117,7 +117,7 @@ public class TagService {
                     int articleCount = tag.getArticleTags().size(); // 게시물 수
                     int likeCount = tag.getTotalLikeCount(); // 좋아요 수
 
-                    ResponseTagDto responseTagDto = new ResponseTagDto(tag.getId(), tag.getTagName(), articleCount, likeCount);
+                    ResponseTagDto responseTagDto = ResponseTagDto.of(tag.getId(), tag.getTagName(), articleCount, likeCount);
                     responseTagDto.setSubscribed(isSubscribed);
                     return responseTagDto;
                 }).sorted((tag1, tag2) -> {
@@ -148,7 +148,7 @@ public class TagService {
         return tagList.map(tag -> {
             int articleCount = tag.getArticleTags().size(); // 게시물 수
             int likeCount = tag.getTotalLikeCount(); // 좋아요 수
-            return new ResponseTagDto(tag.getId(), tag.getTagName(), articleCount, likeCount);
+            return ResponseTagDto.of(tag.getId(), tag.getTagName(), articleCount, likeCount);
         });
     }
 
@@ -164,7 +164,7 @@ public class TagService {
                     User user = article.getUser();
                     int likeCount = article.getLikes().size(); // 좋아요 수
                     int commentCount = article.getComments().size(); // 댓글 수
-                    return new ResponseSimpleArticleDto(article.getId(), article.getTitle(), article.getContents(), user.getName(), likeCount, commentCount);
+                    return ResponseSimpleArticleDto.of(article.getId(), article.getTitle(), article.getContents(), user.getName(), likeCount, commentCount);
                 })
                 .collect(Collectors.toList());
     }
@@ -179,7 +179,7 @@ public class TagService {
         return userTagList.stream()
                 .map(userTag -> {
                     User user = userTag.getUser();
-                    return new ResponseUserDto(user);
+                    return ResponseUserDto.from(user);
                 })
                 .collect(Collectors.toList());
     }
