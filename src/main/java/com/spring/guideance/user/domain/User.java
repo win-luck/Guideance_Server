@@ -29,19 +29,19 @@ public class User {
 
     private String profileImage; // 프로필 이미지
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE}) // 유저가 탈퇴하면 댓글도 삭제
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE}) // 유저가 탈퇴하면 글도 삭제
     private List<Article> articles = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE}) // 유저가 탈퇴하면 좋아요도 삭제
     private List<Likes> likes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE}) // 유저가 탈퇴하면 유저_알림도 삭제
     private List<UserNotice> userNotices = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE}) // 유저가 탈퇴하면 유저_태그도 삭제
     private List<UserTag> userTags = new ArrayList<>();
 
     // 생성 메서드

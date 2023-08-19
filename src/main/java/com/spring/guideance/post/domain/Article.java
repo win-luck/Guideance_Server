@@ -26,7 +26,7 @@ public class Article {
 
     private String title;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -35,13 +35,13 @@ public class Article {
     @CreatedDate
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "article") // 글에 담긴 댓글
+    @OneToMany(mappedBy = "article", cascade = {CascadeType.REMOVE}) // 글에 담긴 댓글, 글이 삭제되면 댓글도 삭제
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "article") // 글이 가진 좋아요
+    @OneToMany(mappedBy = "article", cascade = {CascadeType.REMOVE}) // 글이 가진 좋아요, 글이 삭제되면 좋아요도 삭제
     private List<Likes> likes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "article") // 글이 가진 태그
+    @OneToMany(mappedBy = "article", cascade = {CascadeType.REMOVE}) // 글이 가진 태그, 글이 삭제되면 글_태그도 삭제
     private List<ArticleTag> articleTags = new ArrayList<>();
 
     // 생성 메서드

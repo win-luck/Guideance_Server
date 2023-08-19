@@ -19,10 +19,10 @@ public class Tag {
 
     private String tagName;
 
-    @OneToMany(mappedBy = "tag") // 이 태그를 구독하는 유저들
+    @OneToMany(mappedBy = "tag", cascade = {CascadeType.REMOVE}) // 이 태그를 구독하는 유저들, 태그 삭제 시 유저_태그도 삭제
     private List<UserTag> userTags = new ArrayList<>();
 
-    @OneToMany(mappedBy = "tag") // 이 태그를 가지고 있는 게시글들
+    @OneToMany(mappedBy = "tag", cascade = {CascadeType.REMOVE}) // 이 태그를 가지고 있는 게시글들, 태그 삭제 시 게시글_태그도 삭제
     private List<ArticleTag> articleTags = new ArrayList<>();
 
     public static Tag createTag(String tagName) {
