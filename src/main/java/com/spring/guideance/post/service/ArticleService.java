@@ -80,7 +80,7 @@ public class ArticleService {
     // 게시물 수정
     @Transactional
     public void updateArticle(Long articleId, UpdateArticleDto articleDto) {
-        Article article = articleAuthorCheck(articleId, articleDto.getUserId());
+        Article article = authorCheckAndBringArticle(articleId, articleDto.getUserId());
         // 태그는 일단 수정 불가능하도록 설정
         article.updateArticle(articleDto.getTitle(), articleDto.getContents());
         articleRepository.save(article);
@@ -89,12 +89,12 @@ public class ArticleService {
     // 게시물 삭제
     @Transactional
     public void deleteArticle(Long articleId, DeleteArticleDto articleDto) {
-        Article article = articleAuthorCheck(articleId, articleDto.getUserId());
+        Article article = authorCheckAndBringArticle(articleId, articleDto.getUserId());
         articleRepository.delete(article);
     }
 
     // 게시물 수정/삭제 요청 시 당사자가 맞는지 체크
-    private Article articleAuthorCheck(Long articleId, Long userId) {
+    private Article authorCheckAndBringArticle(Long articleId, Long userId) {
         Article article = articleRepository.findById(articleId).orElseThrow(() -> new ArticleException(ResponseCode.ARTICLE_NOT_FOUND));
         User user = userRepository.findById(userId).orElseThrow(() -> new ArticleException(ResponseCode.USER_NOT_FOUND));
         if (!article.isAuthor(user)) throw new ArticleException(ResponseCode.FORBIDDEN);
@@ -113,7 +113,7 @@ public class ArticleService {
     // 게시물에 댓글 수정
     @Transactional
     public void updateComment(Long commentId, UpdateCommentDto commentDto) {
-        Comment comment = commentAuthorCheck(commentId, commentDto.getUserId());
+        Comment comment = authorCheckAndBringComment(commentId, commentDto.getUserId());
         comment.updateComment(commentDto.getContents());
         commentRepository.save(comment);
     }
@@ -121,12 +121,12 @@ public class ArticleService {
     // 게시물에 댓글 삭제
     @Transactional
     public void deleteComment(Long commentId, Long userId) {
-        Comment comment = commentAuthorCheck(commentId, userId);
+        Comment comment = authorCheckAndBringComment(commentId, userId);
         commentRepository.delete(comment);
     }
 
     // 댓글 수정/삭제 요청 시 당사자가 맞는지 체크
-    private Comment commentAuthorCheck(Long commentId, Long userId) {
+    private Comment authorCheckAndBringComment(Long commentId, Long userId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ArticleException(ResponseCode.COMMENT_NOT_FOUND));
         User user = userRepository.findById(userId).orElseThrow(() -> new ArticleException(ResponseCode.USER_NOT_FOUND));
         if (!comment.isAuthor(user)) throw new ArticleException(ResponseCode.FORBIDDEN);
@@ -138,7 +138,7 @@ public class ArticleService {
     public Long createLikes(Long articleId, RequestLikeDto likeDto) {
         Article article = articleRepository.findById(articleId).orElseThrow(() -> new ArticleException(ResponseCode.ARTICLE_NOT_FOUND));
         User user = userRepository.findById(likeDto.getUserId()).orElseThrow(() -> new ArticleException(ResponseCode.USER_NOT_FOUND));
-        if (likesRepository.findByArticleIdAndUserId(articleId, likeDto.getUserId()).isPresent())
+        if (likesRepository.existsByArticleIdAndUserId(articleId, likeDto.getUserId()))
             throw new ArticleException(ResponseCode.LIKE_ALREADY_EXISTS);
         Likes likes = Likes.createLikes(article, user);
         return likesRepository.save(likes).getId();

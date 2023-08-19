@@ -15,4 +15,6 @@ public interface LikesRepository extends JpaRepository<Likes, Long> {
     List<Likes> findAllByUserId(Long userId);
 
     void deleteById(Long id);
+
+    boolean existsByArticleIdAndUserId(Long articleId, Long userId);
 }
