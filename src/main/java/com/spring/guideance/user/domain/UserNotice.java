@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserNotice {
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_notice_id")
     private Long id;

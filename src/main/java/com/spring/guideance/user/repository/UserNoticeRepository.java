@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface UserNoticeRepository extends JpaRepository<UserNotice, Long> {
     List<UserNotice> findByUserId(Long userId);
+
     List<UserNotice> findByNoticeId(Long noticeId);
 
     Page<UserNotice> findAllByUserIdOrderByCreatedAtDesc(Long userId, Pageable pageable);

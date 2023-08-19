@@ -54,7 +54,7 @@ public class User {
     // 회원정보 수정
     public void updateUser(String name, String profileImage) {
         this.name = name;
-        if(profileImage != null) {
+        if (profileImage != null) {
             this.profileImage = profileImage;
         }
     }
