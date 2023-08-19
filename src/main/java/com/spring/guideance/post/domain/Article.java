@@ -1,7 +1,5 @@
 package com.spring.guideance.post.domain;
 
-import com.spring.guideance.post.dto.request.CreateArticleDto;
-import com.spring.guideance.post.dto.request.UpdateArticleDto;
 import com.spring.guideance.tag.domain.ArticleTag;
 import com.spring.guideance.user.domain.User;
 import lombok.AccessLevel;
@@ -45,10 +43,10 @@ public class Article {
     private List<ArticleTag> articleTags = new ArrayList<>();
 
     // 생성 메서드
-    public static Article createArticle(CreateArticleDto createArticleDto) {
+    public static Article createArticle(String title, String contents) {
         Article article = new Article();
-        article.title = createArticleDto.getTitle();
-        article.contents = createArticleDto.getContents();
+        article.title = title;
+        article.contents = contents;
         return article;
     }
 
@@ -57,9 +55,9 @@ public class Article {
     }
 
     // 수정 메서드
-    public void updateArticle(UpdateArticleDto updateArticleDto) {
-        this.title = updateArticleDto.getTitle();
-        this.contents = updateArticleDto.getContents();
+    public void updateArticle(String title, String contents) {
+        this.title = title;
+        this.contents = contents;
     }
 
     public boolean isAuthor(User user) {
