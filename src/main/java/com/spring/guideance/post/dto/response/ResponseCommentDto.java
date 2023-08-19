@@ -24,5 +24,4 @@ public class ResponseCommentDto {
         this.contents = comment.getContents();
         this.createdAt = comment.getCreatedAt();
     }
-
 }
