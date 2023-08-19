@@ -12,4 +12,6 @@ public interface UserTagRepository extends JpaRepository<UserTag, Long> {
     List<UserTag> findByUserId(Long userId);
 
     List<UserTag> findByTagId(Long tagId);
+
+    boolean existsByTagIdAndUserId(Long tagId, Long userId);
 }

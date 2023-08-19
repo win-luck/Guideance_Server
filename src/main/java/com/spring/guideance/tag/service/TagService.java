@@ -46,12 +46,12 @@ public class TagService {
 
         tagList.forEach(tagName -> {
             // 태그가 존재하지 않으면 새로운 태그를 생성하고, 게시물에 태그를 추가
-            if (tagRepository.findByTagName(tagName).isEmpty()) {
+            if (!tagRepository.existsByTagName(tagName)) {
                 Long tagId = createTag(tagName);
                 articleTagRepository.save(ArticleTag.createArticleTag(article, tagRepository.findById(tagId).orElseThrow(() -> new TagException(ResponseCode.TAG_NOT_FOUND))));
             } else {
                 // 이미 태그가 존재하면 게시물에 태그를 추가
-                Tag tag = tagRepository.findByTagName(tagName).get();
+                Tag tag = tagRepository.findByTagName(tagName).orElseThrow(() -> new TagException(ResponseCode.TAG_NOT_FOUND));
                 articleTagRepository.save(ArticleTag.createArticleTag(article, tag));
             }
         });
@@ -64,7 +64,7 @@ public class TagService {
                 .orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
         Tag tag = tagRepository.findById(tagId)
                 .orElseThrow(() -> new TagException(ResponseCode.TAG_NOT_FOUND));
-        if (userTagRepository.findByTagIdAndUserId(tag.getId(), user.getId()).isPresent())
+        if (userTagRepository.existsByTagIdAndUserId(tag.getId(), user.getId()))
             throw new TagException(ResponseCode.TAG_ALREADY_SUBSCRIBED);
         userTagRepository.save(UserTag.createUserTag(tag, user));
     }
@@ -76,7 +76,7 @@ public class TagService {
                 .orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
         Tag tag = tagRepository.findById(tagId)
                 .orElseThrow(() -> new TagException(ResponseCode.TAG_NOT_FOUND));
-        if (userTagRepository.findByTagIdAndUserId(tag.getId(), user.getId()).isEmpty())
+        if (!userTagRepository.existsByTagIdAndUserId(tag.getId(), user.getId()))
             throw new TagException(ResponseCode.UNSUBSCRIBE_TAG);
         Long id = userTagRepository.findByTagIdAndUserId(tag.getId(), user.getId()).get().getId();
         userTagRepository.deleteById(id);
@@ -91,10 +91,8 @@ public class TagService {
 
     // 태그명 중복 검증
     private void validateDuplicateTag(String tagName) {
-        tagRepository.findByTagName(tagName)
-                .ifPresent(tag -> {
-                    throw new TagException(ResponseCode.TAG_ALREADY_EXISTS);
-                });
+        if (tagRepository.existsByTagName(tagName))
+            throw new TagException(ResponseCode.TAG_ALREADY_EXISTS);
     }
 
     // 태그 삭제
@@ -114,7 +112,7 @@ public class TagService {
 
         List<ResponseTagDto> dtoList = tagList.stream()
                 .map(tag -> {
-                    boolean isSubscribed = userTagRepository.findByTagIdAndUserId(tag.getId(), user.getId()).isPresent();
+                    boolean isSubscribed = userTagRepository.existsByTagIdAndUserId(tag.getId(), user.getId()); // 구독 여부
                     int articleCount = tag.getArticleTags().size(); // 게시물 수
                     int likeCount = tag.getTotalLikeCount(); // 좋아요 수
 
