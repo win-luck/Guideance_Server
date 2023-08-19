@@ -4,7 +4,6 @@ import com.spring.guideance.post.domain.Article;
 import com.spring.guideance.post.domain.Comment;
 import com.spring.guideance.post.domain.Likes;
 import com.spring.guideance.tag.domain.UserTag;
-import com.spring.guideance.user.dto.request.CreateUserDto;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,10 +44,10 @@ public class User {
     private List<UserTag> userTags = new ArrayList<>();
 
     // 생성 메서드
-    public static User createUser(CreateUserDto createUserDto) {
+    public static User createUser(String name, String email) {
         User user = new User();
-        user.name = createUserDto.getName();
-        user.email = createUserDto.getEmail();
+        user.name = name;
+        user.email = email;
         return user;
     }
 

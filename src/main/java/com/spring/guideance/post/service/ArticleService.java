@@ -68,7 +68,7 @@ public class ArticleService {
     // 게시물 작성(태그 관련 로직은 추후 추가)
     @Transactional
     public Long createArticle(CreateArticleDto articleDto) {
-        Article article = Article.createArticle(articleDto);
+        Article article = Article.createArticle(articleDto.getTitle(), articleDto.getContents());
         User user = userRepository.findById(articleDto.getUserId()).orElseThrow(() -> new ArticleException(ResponseCode.USER_NOT_FOUND));
         article.setUser(user);
         return articleRepository.save(article).getId();
@@ -79,7 +79,7 @@ public class ArticleService {
     public void updateArticle(Long articleId, UpdateArticleDto articleDto) {
         Article article = articleAuthorCheck(articleId, articleDto.getUserId());
         // 태그는 일단 수정 불가능하도록 설정
-        article.updateArticle(articleDto);
+        article.updateArticle(articleDto.getTitle(), articleDto.getContents());
         articleRepository.save(article);
     }
 
