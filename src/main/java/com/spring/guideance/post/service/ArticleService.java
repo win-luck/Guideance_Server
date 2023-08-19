@@ -35,13 +35,13 @@ public class ArticleService {
     // 게시물 목록 조회 (제목, 내용, 작성자, 좋아요 수, 댓글 수) (페이징)
     public Page<ResponseSimpleArticleDto> getArticles(Pageable pageable) {
         return articleRepository.findAllByOrderByCreatedAtDesc(pageable)
-                .map(ResponseSimpleArticleDto::new);
+                .map(ResponseSimpleArticleDto::from);
     }
 
     // 특정 게시물 정보 조회 (제목, 내용, 댓글 목록, 좋아요 목록, 작성자, 작성일시)
     public ResponseArticleDto getSingleArticle(Long articleId) {
         Article article = articleRepository.findById(articleId).orElseThrow(() -> new ArticleException(ResponseCode.ARTICLE_NOT_FOUND));
-        return new ResponseArticleDto(
+        return ResponseArticleDto.of(
                 article.getId(),
                 article.getTitle(),
                 article.getContents(),
@@ -50,10 +50,10 @@ public class ArticleService {
                         .map(tag -> tag.getTag().getTagName())
                         .collect(Collectors.toList()),
                 article.getLikes().stream()
-                        .map(likes -> new ResponseLikeDto(likes.getUser().getId(), likes.getArticle().getId(), likes.getCreatedAt()))
+                        .map(likes -> ResponseLikeDto.of(likes.getUser().getId(), likes.getArticle().getId(), likes.getCreatedAt()))
                         .collect(Collectors.toList()),
                 article.getComments().stream()
-                        .map(ResponseCommentDto::new)
+                        .map(ResponseCommentDto::from)
                         .collect(Collectors.toList()),
                 article.getCreatedAt()
         );
@@ -62,7 +62,7 @@ public class ArticleService {
     // 게시물 검색 결과 조회 (페이징)
     public Page<ResponseSimpleArticleDto> searchArticles(String keyword, Pageable pageable) {
         return articleRepository.findAllByTitleContaining(keyword, pageable)
-                .map(ResponseSimpleArticleDto::new);
+                .map(ResponseSimpleArticleDto::from);
     }
 
     // 게시물 작성(태그 관련 로직은 추후 추가)
