@@ -7,6 +7,7 @@ import com.spring.guideance.user.domain.User;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -31,6 +32,7 @@ public class Article {
 
     private String contents;
 
+    @CreatedDate
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "article") // 글에 담긴 댓글
@@ -47,7 +49,6 @@ public class Article {
         Article article = new Article();
         article.title = createArticleDto.getTitle();
         article.contents = createArticleDto.getContents();
-        article.createdAt = LocalDateTime.now();
         return article;
     }
 

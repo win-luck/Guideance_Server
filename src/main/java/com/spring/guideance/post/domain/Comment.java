@@ -5,6 +5,7 @@ import com.spring.guideance.user.domain.User;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -30,6 +31,7 @@ public class Comment {
 
     private String contents; // 댓글 내용
 
+    @CreatedDate
     private LocalDateTime createdAt;
 
     // 생성 메서드
@@ -38,7 +40,6 @@ public class Comment {
         comment.contents = contents;
         comment.user = user;
         comment.article = article;
-        comment.createdAt = LocalDateTime.now();
         return comment;
     }
 

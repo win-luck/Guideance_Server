@@ -3,6 +3,7 @@ package com.spring.guideance.user.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ public class UserNotice {
     @JoinColumn(name = "notice_id")
     private Notice notice;
 
+    @CreatedDate
     private LocalDateTime createdAt;
 
     public void read() {
@@ -35,7 +37,6 @@ public class UserNotice {
         UserNotice userNotice = new UserNotice();
         userNotice.notice = notice;
         userNotice.user = user;
-        userNotice.createdAt = LocalDateTime.now();
         return userNotice;
     }
 }
