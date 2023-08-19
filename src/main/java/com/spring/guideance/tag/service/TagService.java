@@ -22,8 +22,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -106,6 +106,7 @@ public class TagService {
     }
 
     // 태그 목록 조회 (태그명, 게시물수, 좋아요수) (페이징)
+    @Transactional(readOnly = true)
     public Page<ResponseTagDto> getTagList(Long userId, Pageable pageable) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
@@ -142,6 +143,7 @@ public class TagService {
     }
 
     // 태그 검색 결과 조회 (페이징)
+    @Transactional(readOnly = true)
     public Page<ResponseTagDto> searchTag(String tagName, Pageable pageable) {
         Page<Tag> tagList = tagRepository.findByTagNameContaining(tagName, pageable);
 
@@ -153,6 +155,7 @@ public class TagService {
     }
 
     // 특정 태그가 포함된 게시물 목록 조회
+    @Transactional(readOnly = true)
     public List<ResponseSimpleArticleDto> getArticleListByTag(Long tagId) {
         Tag tag = tagRepository.findById(tagId)
                 .orElseThrow(() -> new TagException(ResponseCode.TAG_NOT_FOUND));
@@ -171,6 +174,7 @@ public class TagService {
 
 
     // 특정 태그를 구독하는 유저 목록 조회
+    @Transactional(readOnly = true)
     public List<ResponseUserDto> getUserListByTag(Long tagId) {
         Tag tag = tagRepository.findById(tagId)
                 .orElseThrow(() -> new TagException(ResponseCode.TAG_NOT_FOUND));

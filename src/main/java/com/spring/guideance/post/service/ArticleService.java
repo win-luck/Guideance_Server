@@ -19,8 +19,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,12 +33,14 @@ public class ArticleService {
     private final UserRepository userRepository;
 
     // 게시물 목록 조회 (제목, 내용, 작성자, 좋아요 수, 댓글 수) (페이징)
+    @Transactional(readOnly = true)
     public Page<ResponseSimpleArticleDto> getArticles(Pageable pageable) {
         return articleRepository.findAllByOrderByCreatedAtDesc(pageable)
                 .map(ResponseSimpleArticleDto::from);
     }
 
     // 특정 게시물 정보 조회 (제목, 내용, 댓글 목록, 좋아요 목록, 작성자, 작성일시)
+    @Transactional(readOnly = true)
     public ResponseArticleDto getSingleArticle(Long articleId) {
         Article article = articleRepository.findById(articleId).orElseThrow(() -> new ArticleException(ResponseCode.ARTICLE_NOT_FOUND));
         return ResponseArticleDto.of(
@@ -60,6 +62,7 @@ public class ArticleService {
     }
 
     // 게시물 검색 결과 조회 (페이징)
+    @Transactional(readOnly = true)
     public Page<ResponseSimpleArticleDto> searchArticles(String keyword, Pageable pageable) {
         return articleRepository.findAllByTitleContaining(keyword, pageable)
                 .map(ResponseSimpleArticleDto::from);
@@ -135,7 +138,8 @@ public class ArticleService {
     public Long createLikes(Long articleId, RequestLikeDto likeDto) {
         Article article = articleRepository.findById(articleId).orElseThrow(() -> new ArticleException(ResponseCode.ARTICLE_NOT_FOUND));
         User user = userRepository.findById(likeDto.getUserId()).orElseThrow(() -> new ArticleException(ResponseCode.USER_NOT_FOUND));
-        if(likesRepository.findByArticleIdAndUserId(articleId, likeDto.getUserId()).isPresent()) throw new ArticleException(ResponseCode.LIKE_ALREADY_EXISTS);
+        if (likesRepository.findByArticleIdAndUserId(articleId, likeDto.getUserId()).isPresent())
+            throw new ArticleException(ResponseCode.LIKE_ALREADY_EXISTS);
         Likes likes = Likes.createLikes(article, user);
         return likesRepository.save(likes).getId();
     }
