@@ -2,15 +2,17 @@ package com.spring.guideance.post.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.spring.guideance.user.domain.User;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
-@Getter @Setter
 // @RedisHash(value = "comment", timeToLive = 100)
+@Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Comment {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

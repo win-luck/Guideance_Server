@@ -1,14 +1,16 @@
 package com.spring.guideance.post.domain;
 
 import com.spring.guideance.user.domain.User;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter @Setter
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Likes {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "likes_id")

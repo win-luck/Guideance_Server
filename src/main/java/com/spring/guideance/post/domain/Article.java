@@ -4,8 +4,9 @@ import com.spring.guideance.post.dto.request.CreateArticleDto;
 import com.spring.guideance.post.dto.request.UpdateArticleDto;
 import com.spring.guideance.tag.domain.ArticleTag;
 import com.spring.guideance.user.domain.User;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -14,7 +15,8 @@ import java.util.List;
 
 // @RedisHash(value = "article", timeToLive = 100)
 @Entity
-@Getter @Setter
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Article {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,6 +49,10 @@ public class Article {
         article.contents = createArticleDto.getContents();
         article.createdAt = LocalDateTime.now();
         return article;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     // 수정 메서드
