@@ -51,13 +51,13 @@ public class UserService {
     @Transactional
     public ResponseUserDto login(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
-        return new ResponseUserDto(user);
+        return ResponseUserDto.from(user);
     }
 
     // 회원정보 조회
     public ResponseUserDto getUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
-        return new ResponseUserDto(user);
+        return ResponseUserDto.from(user);
     }
 
     // 회원정보 수정(이름/프사 변경)
@@ -79,14 +79,14 @@ public class UserService {
     public Page<ResponseSimpleArticleDto> getUserArticles(Long userId, Pageable pageable) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
         return articleRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable)
-                .map(ResponseSimpleArticleDto::new);
+                .map(ResponseSimpleArticleDto::from);
     }
 
     // 유저가 구독한 태그 조회
     public List<ResponseTagDto> getUserTags(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
         return user.getUserTags().stream()
-                .map(ResponseTagDto::new)
+                .map(ResponseTagDto::from)
                 .collect(Collectors.toList());
     }
 
@@ -94,21 +94,21 @@ public class UserService {
     public Page<ResponseNoticeDto> getUserNotices(Long userId, Pageable pageable) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
         return userNoticeRepository.findAllByUserIdOrderByCreatedAtDesc(userId, pageable)
-                .map(ResponseNoticeDto::new);
+                .map(ResponseNoticeDto::from);
     }
 
     // 유저가 좋아요 누른 게시물 조회 (페이징)
     public Page<ResponseSimpleArticleDto> getUserLikesArticles(Long userId, Pageable pageable) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
         return articleRepository.findAllByLikesUserIdOrderByCreatedAtDesc(userId, pageable)
-                .map(ResponseSimpleArticleDto::new);
+                .map(ResponseSimpleArticleDto::from);
     }
 
     // 유저가 작성한 댓글 조회 (페이징)
     public Page<ResponseCommentDto> getUserComments(Long userId, Pageable pageable) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
         return commentRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable)
-                .map(ResponseCommentDto::new);
+                .map(ResponseCommentDto::from);
     }
 
 }

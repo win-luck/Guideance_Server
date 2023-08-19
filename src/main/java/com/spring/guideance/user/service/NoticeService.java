@@ -109,7 +109,7 @@ public class NoticeService {
     // 특정 알림을 받은 모든 user 조회 - 관리자 기능
     public List<ResponseUserDto> getUserNoticeUser(Long noticeId) {
         List<UserNotice> userNoticeList = userNoticeRepository.findByNoticeId(noticeId);
-        return userNoticeList.stream().map(userNotice -> new ResponseUserDto(userNotice.getUser())).collect(Collectors.toList());
+        return userNoticeList.stream().map(userNotice -> ResponseUserDto.from(userNotice.getUser())).collect(Collectors.toList());
     }
 
 }
