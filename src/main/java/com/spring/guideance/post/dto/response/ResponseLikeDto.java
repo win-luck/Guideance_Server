@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class ResponseLikeDto {
+
     private Long userId;
     private Long articleId;
     private LocalDateTime createdAt;

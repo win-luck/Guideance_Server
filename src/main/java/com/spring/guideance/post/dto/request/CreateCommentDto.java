@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class CreateCommentDto {
+
     private Long userId;
     private String contents;
 

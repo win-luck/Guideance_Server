@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class ResponseSimpleArticleDto {
+
     private Long articleId;
     private String title;
     private String contents;

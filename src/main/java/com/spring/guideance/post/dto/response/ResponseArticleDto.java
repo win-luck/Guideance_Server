@@ -7,6 +7,7 @@ import java.util.List;
 
 @Data
 public class ResponseArticleDto {
+
     private Long articleId;
     private String title;
     private String contents;

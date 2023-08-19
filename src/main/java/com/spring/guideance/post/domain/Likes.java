@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Likes {
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "likes_id")
     private Long id;
