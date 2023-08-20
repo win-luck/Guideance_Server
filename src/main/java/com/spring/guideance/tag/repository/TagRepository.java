@@ -14,6 +14,7 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
 
     Optional<Tag> findByTagName(String tagName);
 
+    @BatchSize(size = SizeType.SIZE.MEDIUM)
     Page<Tag> findByTagNameContaining(String tagName, Pageable pageable);
 
     boolean existsByTagName(String tagName);
