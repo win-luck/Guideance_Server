@@ -24,7 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -108,47 +108,35 @@ public class TagService {
     public Page<ResponseTagDto> getTagList(Long userId, Pageable pageable) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
-        List<Tag> tagList = tagRepository.findAll();
+        List<ResponseTagDto> dtoList = getResponseTagDtoList(userId, tagRepository.findAll());
 
-        List<ResponseTagDto> dtoList = tagList.stream()
-                .map(tag -> {
-                    boolean isSubscribed = userTagRepository.existsByTagIdAndUserId(tag.getId(), user.getId()); // 구독 여부
-                    int articleCount = tag.getArticleTags().size(); // 게시물 수
-                    int likeCount = tag.getTotalLikeCount(); // 좋아요 수
-
-                    ResponseTagDto responseTagDto = ResponseTagDto.of(tag.getId(), tag.getTagName(), articleCount, likeCount);
-                    responseTagDto.setSubscribed(isSubscribed);
-                    return responseTagDto;
-                }).sorted((tag1, tag2) -> {
-                    if (tag1.isSubscribed() && !tag2.isSubscribed()) return -1;
-                    else if (!tag1.isSubscribed() && tag2.isSubscribed()) return 1;
-                    else {
-                        if (tag1.isSubscribed()) {
-                            Instant createdAt1 = Instant.from(userTagRepository.findByTagIdAndUserId(tag1.getTagId(), userId)
-                                    .orElseThrow(IllegalStateException::new)
-                                    .getCreatedAt());
-                            Instant createdAt2 = Instant.from(userTagRepository.findByTagIdAndUserId(tag2.getTagId(), userId)
-                                    .orElseThrow(IllegalStateException::new)
-                                    .getCreatedAt());
-                            return createdAt2.compareTo(createdAt1);
-                        } else {
-                            return 0;
-                        }
-                    }
-                }).collect(Collectors.toList());
-
+        // 추후 Redis를 사용해서 태그 목록을 캐싱하고, 캐싱된 데이터를 조회해서 반환해야 함
         return new PageImpl<>(dtoList, pageable, dtoList.size());
+    }
+
+    // 태그 목록을 순회하면서 구독 여부, 게시물 수, 좋아요 수를 조회해서 ResponseTagDto로 변환, 이때 구독 여부에 따라 정렬
+    private List<ResponseTagDto> getResponseTagDtoList(Long userId, List<Tag> tagList) {
+        return tagList.stream()
+                .map(tag -> { // Tag를 ResponseTagDto로 반환 (구독 여부, 게시물 수, 좋아요 수 포함)
+                    boolean isSubscribed = userTagRepository.existsByTagIdAndUserId(tag.getId(), userId);
+                    int articleCount = tag.getArticleTags().size();
+                    int likeCount = tag.getTotalLikeCount();
+                    return ResponseTagDto.of(tag.getId(), tag.getTagName(), articleCount, likeCount, isSubscribed);
+                })
+                .sorted(Comparator.comparing(ResponseTagDto::isSubscribed).reversed()) // 구독 여부에 따라 정렬
+                .collect(Collectors.toList());
     }
 
     // 태그 검색 결과 조회 (페이징)
     @Transactional(readOnly = true)
-    public Page<ResponseTagDto> searchTag(String tagName, Pageable pageable) {
+    public Page<ResponseTagDto> searchTag(Long userId, String tagName, Pageable pageable) {
         Page<Tag> tagList = tagRepository.findByTagNameContaining(tagName, pageable);
 
         return tagList.map(tag -> {
             int articleCount = tag.getArticleTags().size(); // 게시물 수
             int likeCount = tag.getTotalLikeCount(); // 좋아요 수
-            return ResponseTagDto.of(tag.getId(), tag.getTagName(), articleCount, likeCount);
+            boolean isSubscribed = userTagRepository.existsByTagIdAndUserId(tag.getId(), userId); // 구독 여부
+            return ResponseTagDto.of(tag.getId(), tag.getTagName(), articleCount, likeCount, isSubscribed);
         });
     }
 
