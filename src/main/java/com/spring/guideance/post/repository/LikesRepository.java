@@ -10,9 +10,7 @@ public interface LikesRepository extends JpaRepository<Likes, Long> {
 
     Optional<Likes> findByArticleIdAndUserId(Long articleId, Long userId);
 
-    List<Likes> findAllByArticleId(Long articleId);
-
-    List<Likes> findAllByUserId(Long userId);
-
     void deleteById(Long id);
+
+    boolean existsByArticleIdAndUserId(Long articleId, Long userId);
 }

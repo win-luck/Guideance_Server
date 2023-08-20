@@ -97,7 +97,7 @@ public class TagServiceTest {
         // given
         String tagName = "tag1";
         Long tagId = tagService.createTag(tagName);
-        Long userId = userRepository.save(User.createUser(new CreateUserDto("test", "test"))).getId();
+        Long userId = userRepository.save(User.createUser("test", "test")).getId();
 
         // when
         tagService.subscribeTag(userId, tagId);
@@ -112,7 +112,7 @@ public class TagServiceTest {
         // given
         String tagName = "tag1";
         Long tagId = tagService.createTag(tagName);
-        Long userId = userRepository.save(User.createUser(new CreateUserDto("test", "test"))).getId();
+        Long userId = userRepository.save(User.createUser("test", "test")).getId();
 
         // when
         tagService.subscribeTag(userId, tagId);
@@ -126,7 +126,7 @@ public class TagServiceTest {
     @Test
     public void 태그목록조회(){
         // given
-        User user = User.createUser(new CreateUserDto("test", "test"));
+        User user = User.createUser("test", "test");
         Long userId = userRepository.save(user).getId();
 
         String tagName = "tag1";
@@ -147,6 +147,8 @@ public class TagServiceTest {
     @Test
     public void 태그검색(){
         // given
+        User user = User.createUser("test", "test");
+        Long userId = userRepository.save(user).getId();
         String tagName = "tag1";
         String tagName2 = "tag2";
         String tagName3 = "tag3";
@@ -155,7 +157,7 @@ public class TagServiceTest {
         tagService.createTag(tagName3);
 
         // when
-        Page<ResponseTagDto> tags = tagService.searchTag("tag", PageRequest.of(0, 10));
+        Page<ResponseTagDto> tags = tagService.searchTag(userId, "tag", PageRequest.of(0, 10));
 
         // then
         assertEquals(3, tags.getTotalElements());
@@ -165,11 +167,11 @@ public class TagServiceTest {
     @Test
     public void 특정태그가포함된게시물목록조회(){
         // given
-        User user = User.createUser(new CreateUserDto("test", "test"));
+        User user = User.createUser("test", "test");
         Long userId = userRepository.save(user).getId();
         List<String> tagNames = new ArrayList<>();
         tagNames.add("tag1");
-        Article article = Article.createArticle(new CreateArticleDto(userId, "title", "content", tagNames));
+        Article article = Article.createArticle("title", "content");
         article.setUser(user);
         Long articleId = articleRepository.save(article).getId();
         Long tagId = tagRepository.save(Tag.createTag("tag1")).getId();
@@ -189,7 +191,7 @@ public class TagServiceTest {
     @Test
     public void 특정태그를구독하는유저목록조회(){
         // given
-        User user  = userRepository.save(User.createUser(new CreateUserDto("test", "test")));
+        User user  = userRepository.save(User.createUser("test", "test"));
         Tag tag = tagRepository.save(Tag.createTag("tag1"));
 
         // when

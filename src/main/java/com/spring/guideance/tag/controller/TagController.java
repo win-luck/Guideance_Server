@@ -37,9 +37,9 @@ public class TagController {
     }
 
     // 태그 검색 결과 조회 (페이징)
-    @GetMapping("/search/{tagName}")
-    public ApiResponse<Page<ResponseTagDto>> searchTag(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size, @PathVariable String tagName) {
-        return ApiResponse.success(tagService.searchTag(tagName, PageRequest.of(page, size)), ResponseCode.TAG_FOUND.getMessage());
+    @GetMapping("/search/{tagName}/user/{userId}")
+    public ApiResponse<Page<ResponseTagDto>> searchTag(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size, @PathVariable String tagName, @PathVariable Long userId) {
+        return ApiResponse.success(tagService.searchTag(userId, tagName, PageRequest.of(page, size)), ResponseCode.TAG_FOUND.getMessage());
     }
 
     // 태그 목록 조회 (태그명, 게시물수, 좋아요수) - 유저가 구독한 태그가 앞에 오도록, 가장 최신으로 구독한 태그가 앞에 오도록 정렬 (페이징)

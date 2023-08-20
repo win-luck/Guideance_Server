@@ -5,15 +5,15 @@ import lombok.Data;
 
 @Data
 public class ResponseUserDto {
+
     private Long userId;
     private String name;
-    private String email;
+    private String keyCode;
     private String profileImage;
 
     private ResponseUserDto(User user) {
         this.userId = user.getId();
-        this.name = user.getName();
-        this.email = user.getEmail();
+        this.keyCode = user.getKeyCode();
         this.profileImage = user.getProfileImage();
     }
 

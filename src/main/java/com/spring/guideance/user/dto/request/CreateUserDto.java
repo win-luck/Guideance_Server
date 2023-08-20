@@ -6,11 +6,14 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class CreateUserDto {
-    private String name;
-    private String email;
 
-    public CreateUserDto(String name, String email) {
+    private String name;
+    private String keyCode;
+    private String profileImage;
+
+    public CreateUserDto(String name, String keyCode, String profileImage) {
         this.name = name;
-        this.email = email;
+        this.keyCode = keyCode;
+        this.profileImage = profileImage;
     }
 }

@@ -1,5 +1,6 @@
 package com.spring.guideance.user.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.spring.guideance.post.domain.Article;
 import com.spring.guideance.post.domain.Comment;
 import com.spring.guideance.post.domain.Likes;
@@ -24,7 +25,8 @@ public class User {
 
     private String name; // 닉네임
 
-    private String email; // 이메일
+    @JsonIgnore
+    private String keyCode; // 로그인 식별키 (카카오 로그인 시 중복 방지)
 
     private String profileImage; // 프로필 이미지
 
@@ -44,23 +46,18 @@ public class User {
     private List<UserTag> userTags = new ArrayList<>();
 
     // 생성 메서드
-    public static User createUser(String name, String email) {
+    public static User createUser(String name, String keyCode, String profileImage) {
         User user = new User();
         user.name = name;
-        user.email = email;
+        user.keyCode = keyCode;
+        user.profileImage = profileImage;
         return user;
     }
 
     // 회원정보 수정
     public void updateUser(String name, String profileImage) {
         this.name = name;
-        if(profileImage != null) {
-            this.profileImage = profileImage;
-        }
-    }
-
-    // 프로필사진 세팅
-    public void setProfileImage(String profileImage) {
         this.profileImage = profileImage;
     }
+
 }

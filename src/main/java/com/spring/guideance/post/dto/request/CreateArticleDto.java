@@ -8,6 +8,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class CreateArticleDto {
+
     private Long userId;
     private String title;
     private String contents;

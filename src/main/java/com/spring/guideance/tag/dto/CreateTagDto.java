@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class CreateTagDto {
+
     private String tagName;
 
     public CreateTagDto(String tagName) {

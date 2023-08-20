@@ -11,6 +11,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ArticleTag { // article과 tag의 다대다 관계로 인해 생긴 중간 테이블, 게시물이 담고 있는 태그를 관리
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "article_tag_id")
     private Long id;

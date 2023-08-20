@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class DeleteArticleDto {
+
     private Long userId;
     private Long articleId;
 

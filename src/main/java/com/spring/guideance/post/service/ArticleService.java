@@ -19,8 +19,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,14 +33,16 @@ public class ArticleService {
     private final UserRepository userRepository;
 
     // 게시물 목록 조회 (제목, 내용, 작성자, 좋아요 수, 댓글 수) (페이징)
+    @Transactional(readOnly = true)
     public Page<ResponseSimpleArticleDto> getArticles(Pageable pageable) {
         return articleRepository.findAllByOrderByCreatedAtDesc(pageable)
                 .map(ResponseSimpleArticleDto::from);
     }
 
     // 특정 게시물 정보 조회 (제목, 내용, 댓글 목록, 좋아요 목록, 작성자, 작성일시)
+    @Transactional(readOnly = true)
     public ResponseArticleDto getSingleArticle(Long articleId) {
-        Article article = articleRepository.findById(articleId).orElseThrow(() -> new ArticleException(ResponseCode.ARTICLE_NOT_FOUND));
+        Article article = getArticleById(articleId);
         return ResponseArticleDto.of(
                 article.getId(),
                 article.getTitle(),
@@ -60,6 +62,7 @@ public class ArticleService {
     }
 
     // 게시물 검색 결과 조회 (페이징)
+    @Transactional(readOnly = true)
     public Page<ResponseSimpleArticleDto> searchArticles(String keyword, Pageable pageable) {
         return articleRepository.findAllByTitleContaining(keyword, pageable)
                 .map(ResponseSimpleArticleDto::from);
@@ -69,7 +72,7 @@ public class ArticleService {
     @Transactional
     public Long createArticle(CreateArticleDto articleDto) {
         Article article = Article.createArticle(articleDto.getTitle(), articleDto.getContents());
-        User user = userRepository.findById(articleDto.getUserId()).orElseThrow(() -> new ArticleException(ResponseCode.USER_NOT_FOUND));
+        User user = getUserById(articleDto.getUserId());
         article.setUser(user);
         return articleRepository.save(article).getId();
     }
@@ -77,7 +80,7 @@ public class ArticleService {
     // 게시물 수정
     @Transactional
     public void updateArticle(Long articleId, UpdateArticleDto articleDto) {
-        Article article = articleAuthorCheck(articleId, articleDto.getUserId());
+        Article article = authorCheckAndBringArticle(articleId, articleDto.getUserId());
         // 태그는 일단 수정 불가능하도록 설정
         article.updateArticle(articleDto.getTitle(), articleDto.getContents());
         articleRepository.save(article);
@@ -86,14 +89,14 @@ public class ArticleService {
     // 게시물 삭제
     @Transactional
     public void deleteArticle(Long articleId, DeleteArticleDto articleDto) {
-        Article article = articleAuthorCheck(articleId, articleDto.getUserId());
+        Article article = authorCheckAndBringArticle(articleId, articleDto.getUserId());
         articleRepository.delete(article);
     }
 
     // 게시물 수정/삭제 요청 시 당사자가 맞는지 체크
-    private Article articleAuthorCheck(Long articleId, Long userId) {
-        Article article = articleRepository.findById(articleId).orElseThrow(() -> new ArticleException(ResponseCode.ARTICLE_NOT_FOUND));
-        User user = userRepository.findById(userId).orElseThrow(() -> new ArticleException(ResponseCode.USER_NOT_FOUND));
+    private Article authorCheckAndBringArticle(Long articleId, Long userId) {
+        Article article = getArticleById(articleId);
+        User user = getUserById(userId);
         if (!article.isAuthor(user)) throw new ArticleException(ResponseCode.FORBIDDEN);
         return article;
     }
@@ -101,8 +104,8 @@ public class ArticleService {
     // 게시물에 댓글 작성
     @Transactional
     public Long createComment(Long articleId, CreateCommentDto commentDto) {
-        Article article = articleRepository.findById(articleId).orElseThrow(() -> new ArticleException(ResponseCode.ARTICLE_NOT_FOUND));
-        User user = userRepository.findById(commentDto.getUserId()).orElseThrow(() -> new ArticleException(ResponseCode.USER_NOT_FOUND));
+        Article article = getArticleById(articleId);
+        User user = getUserById(commentDto.getUserId());
         Comment comment = Comment.createComment(commentDto.getContents(), user, article);
         return commentRepository.save(comment).getId();
     }
@@ -110,7 +113,7 @@ public class ArticleService {
     // 게시물에 댓글 수정
     @Transactional
     public void updateComment(Long commentId, UpdateCommentDto commentDto) {
-        Comment comment = commentAuthorCheck(commentId, commentDto.getUserId());
+        Comment comment = authorCheckAndBringComment(commentId, commentDto.getUserId());
         comment.updateComment(commentDto.getContents());
         commentRepository.save(comment);
     }
@@ -118,14 +121,14 @@ public class ArticleService {
     // 게시물에 댓글 삭제
     @Transactional
     public void deleteComment(Long commentId, Long userId) {
-        Comment comment = commentAuthorCheck(commentId, userId);
+        Comment comment = authorCheckAndBringComment(commentId, userId);
         commentRepository.delete(comment);
     }
 
     // 댓글 수정/삭제 요청 시 당사자가 맞는지 체크
-    private Comment commentAuthorCheck(Long commentId, Long userId) {
+    private Comment authorCheckAndBringComment(Long commentId, Long userId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ArticleException(ResponseCode.COMMENT_NOT_FOUND));
-        User user = userRepository.findById(userId).orElseThrow(() -> new ArticleException(ResponseCode.USER_NOT_FOUND));
+        User user = getUserById(userId);
         if (!comment.isAuthor(user)) throw new ArticleException(ResponseCode.FORBIDDEN);
         return comment;
     }
@@ -133,9 +136,10 @@ public class ArticleService {
     // 게시물에 좋아요
     @Transactional
     public Long createLikes(Long articleId, RequestLikeDto likeDto) {
-        Article article = articleRepository.findById(articleId).orElseThrow(() -> new ArticleException(ResponseCode.ARTICLE_NOT_FOUND));
-        User user = userRepository.findById(likeDto.getUserId()).orElseThrow(() -> new ArticleException(ResponseCode.USER_NOT_FOUND));
-        if(likesRepository.findByArticleIdAndUserId(articleId, likeDto.getUserId()).isPresent()) throw new ArticleException(ResponseCode.LIKE_ALREADY_EXISTS);
+        Article article = getArticleById(articleId);
+        User user = getUserById(likeDto.getUserId());
+        if (likesRepository.existsByArticleIdAndUserId(articleId, likeDto.getUserId()))
+            throw new ArticleException(ResponseCode.LIKE_ALREADY_EXISTS);
         Likes likes = Likes.createLikes(article, user);
         return likesRepository.save(likes).getId();
     }
@@ -145,6 +149,14 @@ public class ArticleService {
     public void deleteLikes(Long articleId, RequestLikeDto likeDto) {
         Likes likes = likesRepository.findByArticleIdAndUserId(articleId, likeDto.getUserId()).orElseThrow(() -> new ArticleException(ResponseCode.LIKE_NOT_FOUND));
         likesRepository.delete(likes);
+    }
+
+    private Article getArticleById(Long articleId) {
+        return articleRepository.findById(articleId).orElseThrow(() -> new ArticleException(ResponseCode.ARTICLE_NOT_FOUND));
+    }
+
+    private User getUserById(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new ArticleException(ResponseCode.USER_NOT_FOUND));
     }
 
 }

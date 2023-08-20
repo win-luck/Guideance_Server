@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 @NoArgsConstructor
 public class UpdateUserDto {
+
     private Long userId;
     private String userName;
     private MultipartFile profileImage;

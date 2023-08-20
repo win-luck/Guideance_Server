@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class ResponseCommentDto {
+
     private Long commentId;
     private Long articleId;
     private String articleTitle;

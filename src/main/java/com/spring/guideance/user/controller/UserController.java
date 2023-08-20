@@ -36,7 +36,7 @@ public class UserController {
     // 로그인
     @PostMapping("/login")
     public ApiResponse<ResponseUserDto> login(@RequestBody LoginUserDto loginUserDto) {
-        return ApiResponse.success(userService.login(loginUserDto.getEmail()), ResponseCode.USER_LOGINED.getMessage());
+        return ApiResponse.success(userService.login(loginUserDto.getKeyCode()), ResponseCode.USER_LOGINED.getMessage());
     }
 
     // 회원정보 조회
