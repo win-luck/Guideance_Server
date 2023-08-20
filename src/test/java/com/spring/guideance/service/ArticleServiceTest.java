@@ -66,9 +66,9 @@ public class ArticleServiceTest {
     @Test
     public void 게시물목록조회(){
         // given
-        User user = User.createUser(new CreateUserDto("test", "test"));
+        User user = User.createUser("test", "test");
         userRepository.save(user);
-        Article article = Article.createArticle(new CreateArticleDto(user.getId(), "test", "test", new ArrayList<>()));
+        Article article = Article.createArticle( "test", "test");
         article.setUser(user);
         articleRepository.save(article);
 
@@ -82,8 +82,8 @@ public class ArticleServiceTest {
     @Test
     public void 게시물생성및상세조회(){
         // given
-        User user = User.createUser(new CreateUserDto("test", "test"));
-        Article article = Article.createArticle(new CreateArticleDto(user.getId(), "test", "test", new ArrayList<>()));
+        User user = User.createUser("test", "test");
+        Article article = Article.createArticle("test", "test");
         Long userId = userRepository.save(user).getId();
         article.setUser(user);
         Long articleId = articleService.createArticle(new CreateArticleDto(user.getId(), "test", "test", new ArrayList<>()));
@@ -98,8 +98,8 @@ public class ArticleServiceTest {
     @Test
     public void 게시물수정(){
         // given
-        User user = User.createUser(new CreateUserDto("test", "test"));
-        Article article = Article.createArticle(new CreateArticleDto(user.getId(), "test", "test", new ArrayList<>()));
+        User user = User.createUser("test", "test");
+        Article article = Article.createArticle("test", "test");
         Long userId = userRepository.save(user).getId();
         article.setUser(user);
         Long articleId = articleRepository.save(article).getId();
@@ -114,8 +114,8 @@ public class ArticleServiceTest {
     @Test
     public void 게시물삭제(){
         // given
-        User user = User.createUser(new CreateUserDto("test", "test"));
-        Article article = Article.createArticle(new CreateArticleDto(user.getId(), "test", "test", new ArrayList<>()));
+        User user = User.createUser("test", "test");
+        Article article = Article.createArticle("test", "test");
         Long userId = userRepository.save(user).getId();
         article.setUser(user);
         Long articleId = articleRepository.save(article).getId();
@@ -130,8 +130,8 @@ public class ArticleServiceTest {
     @Test
     public void 게시물에댓글작성(){
         // given
-        User user = User.createUser(new CreateUserDto("test", "test"));
-        Article article = Article.createArticle(new CreateArticleDto(user.getId(), "test", "test", new ArrayList<>()));
+        User user = User.createUser("test", "test");
+        Article article = Article.createArticle("test", "test");
         Long userId = userRepository.save(user).getId();
         article.setUser(user);
         Long articleId = articleRepository.save(article).getId();
@@ -146,8 +146,8 @@ public class ArticleServiceTest {
     @Test
     public void 게시물에댓글수정(){
         // given
-        User user = User.createUser(new CreateUserDto("test", "test"));
-        Article article = Article.createArticle(new CreateArticleDto(user.getId(), "test", "test", new ArrayList<>()));
+        User user = User.createUser("test", "test");
+        Article article = Article.createArticle("test", "test");
         Long userId = userRepository.save(user).getId();
         article.setUser(user);
         Long articleId = articleRepository.save(article).getId();
@@ -163,8 +163,8 @@ public class ArticleServiceTest {
     @Test
     public void 게시물에댓글삭제(){
         // given
-        User user = User.createUser(new CreateUserDto("test", "test"));
-        Article article = Article.createArticle(new CreateArticleDto(user.getId(), "test", "test", new ArrayList<>()));
+        User user = User.createUser("test", "test");
+        Article article = Article.createArticle("test", "test");
         Long userId = userRepository.save(user).getId();
         article.setUser(user);
         Long articleId = articleRepository.save(article).getId();
@@ -180,8 +180,8 @@ public class ArticleServiceTest {
     @Test
     public void 게시물에좋아요(){
         // given
-        User user = User.createUser(new CreateUserDto("test", "test"));
-        Article article = Article.createArticle(new CreateArticleDto(user.getId(), "test", "test", new ArrayList<>()));
+        User user = User.createUser("test", "test");
+        Article article = Article.createArticle("test", "test");
         Long userId = userRepository.save(user).getId();
         article.setUser(user);
         Long articleId = articleRepository.save(article).getId();
@@ -201,8 +201,8 @@ public class ArticleServiceTest {
     @Test
     public void 게시물에좋아요취소() {
         // given
-        User user = User.createUser(new CreateUserDto("test", "test"));
-        Article article = Article.createArticle(new CreateArticleDto(user.getId(), "test", "test", new ArrayList<>()));
+        User user = User.createUser("test", "test");
+        Article article = Article.createArticle("test", "test");
         Long userId = userRepository.save(user).getId();
         User user1 = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));
         article.setUser(user1);
