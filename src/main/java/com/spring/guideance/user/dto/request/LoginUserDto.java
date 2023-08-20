@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LoginUserDto {
 
-    private String email;
+    private String keyCode;
 
     public LoginUserDto(String email) {
-        this.email = email;
+        this.keyCode = keyCode;
     }
 }

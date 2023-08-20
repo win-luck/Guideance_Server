@@ -36,20 +36,20 @@ public class UserService {
     @Transactional(readOnly = true)
     public Long createUser(CreateUserDto createUserDto) {
         ValidateDuplicateUser(createUserDto);
-        return userRepository.save(User.createUser(createUserDto.getName(), createUserDto.getEmail())).getId();
+        return userRepository.save(User.createUser(createUserDto.getName(), createUserDto.getKeyCode(), createUserDto.getProfileImage())).getId();
     }
 
     // 중복 이메일 체크
     private void ValidateDuplicateUser(CreateUserDto createUserDto) {
-        if(userRepository.existsByEmail(createUserDto.getEmail())) {
+        if(userRepository.existsByKeyCode(createUserDto.getKeyCode())) {
             throw new UserException(ResponseCode.USER_ALREADY_EXISTS);
         }
     }
 
     // 로그인
     @Transactional
-    public ResponseUserDto login(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
+    public ResponseUserDto login(String key) {
+        User user = userRepository.findByKeyCode(key).orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
         return ResponseUserDto.from(user);
     }
 
