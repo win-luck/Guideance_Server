@@ -71,13 +71,13 @@ public class NoticeService {
     @Transactional
     public void sendNoticeForNewArticle(Long articleId) {
         Article article = articleRepository.findById(articleId).orElseThrow(() -> new ArticleException(ResponseCode.ARTICLE_NOT_FOUND));
-        List<Tag> tagList = article.getArticleTags().stream().map(ArticleTag::getTag).collect(Collectors.toList());
+        List<Tag> tags = article.getArticleTags().stream().map(ArticleTag::getTag).collect(Collectors.toList());
 
-        for (Tag tag : tagList) {
-            List<User> userList = tag.getUserTags().stream().map(UserTag::getUser).collect(Collectors.toList());
+        for (Tag tag : tags) {
+            List<User> users = tag.getUserTags().stream().map(UserTag::getUser).collect(Collectors.toList());
 
             Notice notice = noticeRepository.save(Notice.createNotice(3, null, article.getTitle()));
-            for (User user : userList) {
+            for (User user : users) {
                 if (user.getId().equals(article.getUser().getId()))
                     continue; // 자신이 구독하는 태그를 자신의 게시물에 달아 업로드한 경우 알림 전송 생략
                 userNoticeRepository.save(UserNotice.createUserNotice(notice, user));
@@ -111,8 +111,8 @@ public class NoticeService {
     // 특정 알림을 받은 모든 user 조회 - 관리자 기능
     @Transactional(readOnly = true)
     public List<ResponseUserDto> getUserNoticeUser(Long noticeId) {
-        List<UserNotice> userNoticeList = userNoticeRepository.findByNoticeId(noticeId);
-        return userNoticeList.stream().map(userNotice -> ResponseUserDto.from(userNotice.getUser())).collect(Collectors.toList());
+        List<UserNotice> userNotices = userNoticeRepository.findByNoticeId(noticeId);
+        return userNotices.stream().map(userNotice -> ResponseUserDto.from(userNotice.getUser())).collect(Collectors.toList());
     }
 
 }
