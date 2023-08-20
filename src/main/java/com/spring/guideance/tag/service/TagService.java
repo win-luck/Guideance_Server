@@ -60,10 +60,8 @@ public class TagService {
     // 특정 유저가 태그를 구독
     @Transactional
     public void subscribeTag(Long userId, Long tagId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
-        Tag tag = tagRepository.findById(tagId)
-                .orElseThrow(() -> new TagException(ResponseCode.TAG_NOT_FOUND));
+        User user = getUserById(userId);
+        Tag tag = getTagById(tagId);
         if (userTagRepository.existsByTagIdAndUserId(tag.getId(), user.getId()))
             throw new TagException(ResponseCode.TAG_ALREADY_SUBSCRIBED);
         userTagRepository.save(UserTag.createUserTag(tag, user));
@@ -72,14 +70,11 @@ public class TagService {
     // 특정 유저가 태그 구독을 취소
     @Transactional
     public void unsubscribeTag(Long userId, Long tagId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
-        Tag tag = tagRepository.findById(tagId)
-                .orElseThrow(() -> new TagException(ResponseCode.TAG_NOT_FOUND));
+        User user = getUserById(userId);
+        Tag tag = getTagById(tagId);
         if (!userTagRepository.existsByTagIdAndUserId(tag.getId(), user.getId()))
             throw new TagException(ResponseCode.UNSUBSCRIBE_TAG);
-        Long id = userTagRepository.findByTagIdAndUserId(tag.getId(), user.getId()).get().getId();
-        userTagRepository.deleteById(id);
+        userTagRepository.deleteByTagIdAndUserId(tag.getId(), user.getId());
     }
 
     // 새로운 태그 생성(직접 삽입)
@@ -98,25 +93,23 @@ public class TagService {
     // 태그 삭제
     @Transactional
     public void deleteTag(Long tagId) {
-        Tag tag = tagRepository.findById(tagId)
-                .orElseThrow(() -> new TagException(ResponseCode.TAG_NOT_FOUND));
+        Tag tag = getTagById(tagId);
         tagRepository.delete(tag);
     }
 
     // 태그 목록 조회 (태그명, 게시물수, 좋아요수) (페이징)
     @Transactional(readOnly = true)
     public Page<ResponseTagDto> getTagList(Long userId, Pageable pageable) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
-        List<ResponseTagDto> dtoList = getResponseTagDtoList(userId, tagRepository.findAll());
-
+        if (userRepository.existsById(userId))
+            throw new UserException(ResponseCode.USER_NOT_FOUND);
+        List<ResponseTagDto> dtos = getResponseTagDtoList(userId, tagRepository.findAll());
         // 추후 Redis를 사용해서 태그 목록을 캐싱하고, 캐싱된 데이터를 조회해서 반환해야 함
-        return new PageImpl<>(dtoList, pageable, dtoList.size());
+        return new PageImpl<>(dtos, pageable, dtos.size());
     }
 
     // 태그 목록을 순회하면서 구독 여부, 게시물 수, 좋아요 수를 조회해서 ResponseTagDto로 변환, 이때 구독 여부에 따라 정렬
-    private List<ResponseTagDto> getResponseTagDtoList(Long userId, List<Tag> tagList) {
-        return tagList.stream()
+    private List<ResponseTagDto> getResponseTagDtoList(Long userId, List<Tag> tags) {
+        return tags.stream()
                 .map(tag -> { // Tag를 ResponseTagDto로 반환 (구독 여부, 게시물 수, 좋아요 수 포함)
                     boolean isSubscribed = userTagRepository.existsByTagIdAndUserId(tag.getId(), userId);
                     int articleCount = tag.getArticleTags().size();
@@ -143,8 +136,7 @@ public class TagService {
     // 특정 태그가 포함된 게시물 목록 조회
     @Transactional(readOnly = true)
     public List<ResponseSimpleArticleDto> getArticleListByTag(Long tagId) {
-        Tag tag = tagRepository.findById(tagId)
-                .orElseThrow(() -> new TagException(ResponseCode.TAG_NOT_FOUND));
+        Tag tag = getTagById(tagId);
         List<ArticleTag> articleTagList = articleTagRepository.findByTagId(tag.getId());
 
         return articleTagList.stream()
@@ -158,15 +150,13 @@ public class TagService {
                 .collect(Collectors.toList());
     }
 
-
     // 특정 태그를 구독하는 유저 목록 조회
     @Transactional(readOnly = true)
     public List<ResponseUserDto> getUserListByTag(Long tagId) {
-        Tag tag = tagRepository.findById(tagId)
-                .orElseThrow(() -> new TagException(ResponseCode.TAG_NOT_FOUND));
-        List<UserTag> userTagList = userTagRepository.findByTagId(tag.getId());
+        Tag tag = getTagById(tagId);
+        List<UserTag> userTags = userTagRepository.findByTagId(tag.getId());
 
-        return userTagList.stream()
+        return userTags.stream()
                 .map(userTag -> {
                     User user = userTag.getUser();
                     return ResponseUserDto.from(user);
@@ -174,5 +164,14 @@ public class TagService {
                 .collect(Collectors.toList());
     }
 
+    private Tag getTagById(Long tagId) {
+        return tagRepository.findById(tagId)
+                .orElseThrow(() -> new TagException(ResponseCode.TAG_NOT_FOUND));
+    }
+
+    private User getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
+    }
 
 }
