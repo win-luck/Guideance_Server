@@ -1,11 +1,13 @@
 package com.spring.guideance.post.dto.response;
 
-import lombok.Data;
+import com.spring.guideance.post.domain.Article;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Data
+@Getter
 public class ResponseArticleDto {
 
     private Long articleId;
@@ -30,5 +32,18 @@ public class ResponseArticleDto {
 
     public static ResponseArticleDto of(Long articleId, String title, String contents, String authorName, List<String> tags, List<ResponseLikeDto> likes, List<ResponseCommentDto> comments, LocalDateTime createdAt) {
         return new ResponseArticleDto(articleId, title, contents, authorName, tags, likes, comments, createdAt);
+    }
+
+    public static ResponseArticleDto from(Article article) {
+        return ResponseArticleDto.of(
+                article.getId(),
+                article.getTitle(),
+                article.getContents(),
+                article.getUser().getName(),
+                article.getArticleTags().stream().map(articleTag -> articleTag.getTag().getTagName()).collect(Collectors.toList()),
+                article.getLikes().stream().map(ResponseLikeDto::from).collect(Collectors.toList()),
+                article.getComments().stream().map(ResponseCommentDto::from).collect(Collectors.toList()),
+                article.getCreatedAt()
+        );
     }
 }

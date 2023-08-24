@@ -1,16 +1,14 @@
 package com.spring.guideance.user.dto.request;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
-@Data
+@Getter
 @NoArgsConstructor
 public class UpdateUserDto {
 
     private Long userId;
     private String userName;
-    private MultipartFile profileImage;
 
     public UpdateUserDto(Long userId, String userName) {
         this.userId = userId;

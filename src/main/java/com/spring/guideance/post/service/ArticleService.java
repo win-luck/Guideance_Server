@@ -4,9 +4,7 @@ import com.spring.guideance.post.domain.Article;
 import com.spring.guideance.post.domain.Comment;
 import com.spring.guideance.post.domain.Likes;
 import com.spring.guideance.post.dto.request.*;
-import com.spring.guideance.post.dto.response.ResponseLikeDto;
 import com.spring.guideance.post.dto.response.ResponseArticleDto;
-import com.spring.guideance.post.dto.response.ResponseCommentDto;
 import com.spring.guideance.post.dto.response.ResponseSimpleArticleDto;
 import com.spring.guideance.post.repository.ArticleRepository;
 import com.spring.guideance.post.repository.CommentRepository;
@@ -20,8 +18,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -43,22 +39,7 @@ public class ArticleService {
     @Transactional(readOnly = true)
     public ResponseArticleDto getSingleArticle(Long articleId) {
         Article article = getArticleById(articleId);
-        return ResponseArticleDto.of(
-                article.getId(),
-                article.getTitle(),
-                article.getContents(),
-                article.getUser().getName(),
-                article.getArticleTags().stream()
-                        .map(tag -> tag.getTag().getTagName())
-                        .collect(Collectors.toList()),
-                article.getLikes().stream()
-                        .map(likes -> ResponseLikeDto.of(likes.getUser().getId(), likes.getArticle().getId(), likes.getCreatedAt()))
-                        .collect(Collectors.toList()),
-                article.getComments().stream()
-                        .map(ResponseCommentDto::from)
-                        .collect(Collectors.toList()),
-                article.getCreatedAt()
-        );
+        return ResponseArticleDto.from(article);
     }
 
     // 게시물 검색 결과 조회 (페이징)
@@ -158,5 +139,4 @@ public class ArticleService {
     private User getUserById(Long userId) {
         return userRepository.findById(userId).orElseThrow(() -> new ArticleException(ResponseCode.USER_NOT_FOUND));
     }
-
 }

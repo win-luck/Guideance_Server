@@ -1,9 +1,9 @@
 package com.spring.guideance.user.dto.response;
 
 import com.spring.guideance.user.domain.User;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class ResponseUserDto {
 
     private Long userId;
@@ -13,6 +13,7 @@ public class ResponseUserDto {
 
     private ResponseUserDto(User user) {
         this.userId = user.getId();
+        this.name = user.getName();
         this.keyCode = user.getKeyCode();
         this.profileImage = user.getProfileImage();
     }

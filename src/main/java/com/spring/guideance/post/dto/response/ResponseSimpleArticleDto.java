@@ -1,9 +1,9 @@
 package com.spring.guideance.post.dto.response;
 
 import com.spring.guideance.post.domain.Article;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class ResponseSimpleArticleDto {
 
     private Long articleId;

@@ -1,9 +1,9 @@
 package com.spring.guideance.tag.dto;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data
+@Getter
 @NoArgsConstructor
 public class CreateTagDto {
 

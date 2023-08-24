@@ -1,11 +1,11 @@
 package com.spring.guideance.post.dto.request;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Data
+@Getter
 @NoArgsConstructor
 public class CreateArticleDto {
 
@@ -20,5 +20,4 @@ public class CreateArticleDto {
         this.contents = contents;
         this.tags = tags;
     }
-
 }

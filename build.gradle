@@ -28,11 +28,13 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-	// Junit4
-	testImplementation("org.junit.vintage:junit-vintage-engine") {
-		exclude group: "org.hamcrest", module: "hamcrest-core"
+	// Junit 5
+	testImplementation("org.junit.jupiter:junit-jupiter-api:5.5.1") {
+		exclude module:'junit-platform-commons'
 	}
-
+	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.5.1")
+	testRuntimeOnly("org.junit.platform:junit-platform-engine:1.5.1")
+	testRuntimeOnly("org.junit.platform:junit-platform-commons:1.5.1")
 
 	// mysql dependency
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
@@ -41,6 +43,10 @@ dependencies {
 
 	// redis dependency
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	// webclient dependency
+	implementation platform('org.springframework.boot:spring-boot-dependencies:2.5.4') // Replace with your Spring Boot version
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 tasks.named('test') {

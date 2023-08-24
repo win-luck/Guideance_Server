@@ -1,10 +1,11 @@
 package com.spring.guideance.post.dto.response;
 
-import lombok.Data;
+import com.spring.guideance.post.domain.Likes;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
 public class ResponseLikeDto {
 
     private Long userId;
@@ -19,5 +20,13 @@ public class ResponseLikeDto {
 
     public static ResponseLikeDto of(Long userId, Long articleId, LocalDateTime createdAt) {
         return new ResponseLikeDto(userId, articleId, createdAt);
+    }
+
+    public static ResponseLikeDto from(Likes likes) {
+        return ResponseLikeDto.of(
+                likes.getUser().getId(),
+                likes.getArticle().getId(),
+                likes.getCreatedAt()
+        );
     }
 }

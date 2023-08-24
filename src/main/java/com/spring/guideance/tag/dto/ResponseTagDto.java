@@ -1,9 +1,9 @@
 package com.spring.guideance.tag.dto;
 
 import com.spring.guideance.tag.domain.UserTag;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class ResponseTagDto {
     
     private Long tagId;

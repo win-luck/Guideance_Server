@@ -27,18 +27,6 @@ public class UserController {
     private final UserService userService;
     private final NoticeService noticeService;
 
-    // 회원가입
-    @PostMapping("/create")
-    public ApiResponse<Long> createUser(@RequestBody CreateUserDto createUserDto) {
-        return ApiResponse.success(userService.createUser(createUserDto), ResponseCode.USER_CREATED.getMessage());
-    }
-
-    // 로그인
-    @PostMapping("/login")
-    public ApiResponse<ResponseUserDto> login(@RequestBody LoginUserDto loginUserDto) {
-        return ApiResponse.success(userService.login(loginUserDto.getKeyCode()), ResponseCode.USER_LOGINED.getMessage());
-    }
-
     // 회원정보 조회
     @GetMapping("/{userId}")
     public ApiResponse<ResponseUserDto> getUser(@PathVariable Long userId) {
@@ -62,7 +50,8 @@ public class UserController {
 
     // 작성한 게시물 조회 (페이징)
     @GetMapping("/{userId}/articles/writes")
-    public ApiResponse<Page<ResponseSimpleArticleDto>> getArticles(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @PathVariable Long userId) {
+    public ApiResponse<Page<ResponseSimpleArticleDto>> getArticles(@RequestParam(defaultValue = "0") int page,
+                                                                   @RequestParam(defaultValue = "10") int size, @PathVariable Long userId) {
         return ApiResponse.success(userService.getUserArticles(userId, PageRequest.of(page, size)), ResponseCode.ARTICLE_FOUND.getMessage());
     }
 

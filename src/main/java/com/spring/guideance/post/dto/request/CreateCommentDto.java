@@ -1,9 +1,9 @@
 package com.spring.guideance.post.dto.request;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data
+@Getter
 @NoArgsConstructor
 public class CreateCommentDto {
 

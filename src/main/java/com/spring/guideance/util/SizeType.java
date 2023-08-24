@@ -16,8 +16,8 @@ public enum SizeType { // 페이징
     }
 
     public static class SIZE {
-        public static final int SMALL = 10;
-        public static final int MEDIUM = 20;
-        public static final int LARGE = 30;
+        public static final int SMALL = 100;
+        public static final int MEDIUM = 200;
+        public static final int LARGE = 500;
     }
 }

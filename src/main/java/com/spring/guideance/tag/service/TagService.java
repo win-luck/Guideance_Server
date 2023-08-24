@@ -100,7 +100,7 @@ public class TagService {
     // 태그 목록 조회 (태그명, 게시물수, 좋아요수) (페이징)
     @Transactional(readOnly = true)
     public Page<ResponseTagDto> getTagList(Long userId, Pageable pageable) {
-        if (userRepository.existsById(userId))
+        if (!userRepository.existsById(userId))
             throw new UserException(ResponseCode.USER_NOT_FOUND);
         List<ResponseTagDto> dtos = getResponseTagDtoList(userId, tagRepository.findAll());
         // 추후 Redis를 사용해서 태그 목록을 캐싱하고, 캐싱된 데이터를 조회해서 반환해야 함
@@ -171,7 +171,7 @@ public class TagService {
 
     private User getUserById(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new TagException(ResponseCode.USER_NOT_FOUND));
     }
 
 }

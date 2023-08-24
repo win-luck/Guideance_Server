@@ -33,13 +33,14 @@ public class UserService {
     private final UserNoticeRepository userNoticeRepository;
 
     // 회원가입
-    @Transactional(readOnly = true)
-    public Long createUser(CreateUserDto createUserDto) {
+    @Transactional
+    public ResponseUserDto createUser(CreateUserDto createUserDto) {
         ValidateDuplicateUser(createUserDto);
-        return userRepository.save(User.createUser(createUserDto.getName(), createUserDto.getKeyCode(), createUserDto.getProfileImage())).getId();
+        User user = userRepository.save(User.createUser(createUserDto.getName(), createUserDto.getKeyCode(), createUserDto.getProfileImage()));
+        return ResponseUserDto.from(user);
     }
 
-    // 중복 이메일 체크
+    // 중복 KeyCode 체크
     private void ValidateDuplicateUser(CreateUserDto createUserDto) {
         if(userRepository.existsByKeyCode(createUserDto.getKeyCode())) {
             throw new UserException(ResponseCode.USER_ALREADY_EXISTS);
@@ -58,6 +59,18 @@ public class UserService {
     public ResponseUserDto getUser(Long userId) {
         User user = getUserById(userId);
         return ResponseUserDto.from(user);
+    }
+
+    // 회원 중복 체크
+    @Transactional(readOnly = true)
+    public boolean isAlreadyUser(String keyCode) {
+        return userRepository.existsByKeyCode(keyCode);
+    }
+
+    // 회원정보 조회 (유저별 키코드)
+    @Transactional(readOnly = true)
+    public ResponseUserDto getUserByKeyCode(String keyCode) {
+        return ResponseUserDto.from(userRepository.findByKeyCode(keyCode).orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND)));
     }
 
     // 회원정보 수정(이름/프사 변경)
@@ -123,5 +136,4 @@ public class UserService {
     private User getUserById(Long userId) {
         return userRepository.findById(userId).orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
     }
-
 }
