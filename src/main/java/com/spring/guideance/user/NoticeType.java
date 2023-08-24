@@ -3,7 +3,8 @@ package com.spring.guideance.user;
 public enum NoticeType {
     LIKE(1, "Like"),
     COMMENT(2, "Comment"),
-    TAG_SUB(3, "TagSub");
+    TAG_SUB(3, "TagSub"),
+    DEFAULT(4, "Default");
 
     private final int code;
     private final String description;
@@ -19,7 +20,7 @@ public enum NoticeType {
                 return noticeType;
             }
         }
-        return null;
+        return DEFAULT;
     }
 
     public int getCode() {
