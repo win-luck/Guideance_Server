@@ -171,7 +171,7 @@ public class TagService {
 
     private User getUserById(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new TagException(ResponseCode.USER_NOT_FOUND));
     }
 
 }
