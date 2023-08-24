@@ -13,6 +13,7 @@ public class ResponseUserDto {
 
     private ResponseUserDto(User user) {
         this.userId = user.getId();
+        this.name = user.getName();
         this.keyCode = user.getKeyCode();
         this.profileImage = user.getProfileImage();
     }
