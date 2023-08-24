@@ -11,27 +11,26 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ArticleException.class)
-    public ResponseEntity<ApiResponse<Void>> handleArticleException(ArticleException e) {
-        log.error("ArticleException: {}", e.getMessage());
-        return new ResponseEntity<>(ApiResponse.fail(e.getResponseCode()), e.getResponseCode().getHttpStatus());
+    public ApiResponse<Void> handleArticleException(ArticleException e) {
+        log.info("ArticleException: {}", e.getMessage());
+        return ApiResponse.fail(e.getResponseCode());
     }
 
     @ExceptionHandler(UserException.class)
-    public ResponseEntity<ApiResponse<Void>> handleUserException(UserException e) {
-        log.error("UserException: {}", e.getMessage());
-        return new ResponseEntity<>(ApiResponse.fail(e.getResponseCode()), e.getResponseCode().getHttpStatus());
+    public ApiResponse<Void> handleUserException(UserException e) {
+        log.info("UserException: {}", e.getMessage());
+        return ApiResponse.fail(e.getResponseCode());
     }
 
     @ExceptionHandler(NoticeException.class)
-    public ResponseEntity<ApiResponse<Void>> handleNoticeException(NoticeException e) {
-        log.error("NoticeException: {}", e.getMessage());
-        return new ResponseEntity<>(ApiResponse.fail(e.getResponseCode()), e.getResponseCode().getHttpStatus());
+    public ApiResponse<Void> handleNoticeException(NoticeException e) {
+        log.info("NoticeException: {}", e.getMessage());
+        return ApiResponse.fail(e.getResponseCode());
     }
 
     @ExceptionHandler(TagException.class)
-    public ResponseEntity<ApiResponse<Void>> handleTagException(TagException e) {
-        log.error("TagException: {}", e.getMessage());
-        return new ResponseEntity<>(ApiResponse.fail(e.getResponseCode()), e.getResponseCode().getHttpStatus());
+    public ApiResponse<Void> handleTagException(TagException e) {
+        log.info("TagException: {}", e.getMessage());
+        return ApiResponse.fail(e.getResponseCode());
     }
-
 }
