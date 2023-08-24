@@ -1,5 +1,7 @@
-package com.spring.guideance.auth;
+package com.spring.guideance.auth.controller;
 
+import com.spring.guideance.auth.component.KakaoUserInfo;
+import com.spring.guideance.auth.dto.KakaoUserInfoResponse;
 import com.spring.guideance.user.dto.request.CreateUserDto;
 import com.spring.guideance.user.dto.response.ResponseUserDto;
 import com.spring.guideance.user.service.UserService;

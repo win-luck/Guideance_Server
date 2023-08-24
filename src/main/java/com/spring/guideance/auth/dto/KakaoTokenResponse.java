@@ -1,4 +1,4 @@
-package com.spring.guideance.auth;
+package com.spring.guideance.auth.dto;
 
 import lombok.Data;
 

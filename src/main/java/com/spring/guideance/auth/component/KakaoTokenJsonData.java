@@ -1,5 +1,6 @@
-package com.spring.guideance.auth;
+package com.spring.guideance.auth.component;
 
+import com.spring.guideance.auth.dto.KakaoTokenResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;

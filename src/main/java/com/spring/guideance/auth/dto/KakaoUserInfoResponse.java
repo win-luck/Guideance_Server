@@ -1,5 +1,6 @@
-package com.spring.guideance.auth;
+package com.spring.guideance.auth.dto;
 
+import com.spring.guideance.auth.dto.KakaoAccount;
 import lombok.Data;
 
 @Data
