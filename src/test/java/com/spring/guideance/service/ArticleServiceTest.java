@@ -10,26 +10,18 @@ import com.spring.guideance.post.repository.CommentRepository;
 import com.spring.guideance.post.repository.LikesRepository;
 import com.spring.guideance.post.service.ArticleService;
 import com.spring.guideance.user.domain.User;
-import com.spring.guideance.user.dto.request.CreateUserDto;
 import com.spring.guideance.user.repository.UserRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @Transactional
 public class ArticleServiceTest {
@@ -45,48 +37,33 @@ public class ArticleServiceTest {
     @Autowired
     UserRepository userRepository;
 
-    @AfterEach
-    public void tearDown() {
-        System.out.println("테스트 종료");
-        articleRepository.deleteAll();
-        commentRepository.deleteAll();
-        likesRepository.deleteAll();
-        userRepository.deleteAll();
-    }
-
     @BeforeEach
-    public void setUp() {
-        System.out.println("테스트 시작");
+    public void init(){
         articleRepository.deleteAll();
         commentRepository.deleteAll();
         likesRepository.deleteAll();
         userRepository.deleteAll();
+
+        // given
+        User user = userRepository.save(User.createUser("test", "test", null));
+        Article article = Article.createArticle( "test", "test");
+        article.setUser(user);
+        articleRepository.save(article);
     }
 
     @Test
     public void 게시물목록조회(){
-        // given
-        User user = User.createUser("test", "test");
-        userRepository.save(user);
-        Article article = Article.createArticle( "test", "test");
-        article.setUser(user);
-        articleRepository.save(article);
-
         // when
         Page<ResponseSimpleArticleDto> responseArticleDtoList = articleService.getArticles(PageRequest.of(0, 10));
 
         // then
-        assertEquals(responseArticleDtoList.getContent().get(0).getTitle(), "test");
+        assertEquals( "test", responseArticleDtoList.getContent().get(0).getTitle());
     }
 
     @Test
     public void 게시물생성및상세조회(){
         // given
-        User user = User.createUser("test", "test");
-        Article article = Article.createArticle("test", "test");
-        Long userId = userRepository.save(user).getId();
-        article.setUser(user);
-        Long articleId = articleService.createArticle(new CreateArticleDto(user.getId(), "test", "test", new ArrayList<>()));
+        Long articleId = articleRepository.findAll().get(0).getId();
 
         // when
         ResponseArticleDto responseArticleDto = articleService.getSingleArticle(articleId);
@@ -98,43 +75,34 @@ public class ArticleServiceTest {
     @Test
     public void 게시물수정(){
         // given
-        User user = User.createUser("test", "test");
-        Article article = Article.createArticle("test", "test");
-        Long userId = userRepository.save(user).getId();
-        article.setUser(user);
-        Long articleId = articleRepository.save(article).getId();
+        Long articleId = articleRepository.findAll().get(0).getId();
+        Long userId = userRepository.findAll().get(0).getId();
 
         // when
-        articleService.updateArticle(articleId, new UpdateArticleDto(user.getId(), "test2", "test2"));
+        articleService.updateArticle(articleId, new UpdateArticleDto(userId, "test2", "test2"));
 
         // then
-        assertEquals(articleRepository.findById(articleId).get().getTitle(), "test2");
+        assertEquals("test2", articleRepository.findById(articleId).get().getTitle());
     }
 
     @Test
     public void 게시물삭제(){
         // given
-        User user = User.createUser("test", "test");
-        Article article = Article.createArticle("test", "test");
-        Long userId = userRepository.save(user).getId();
-        article.setUser(user);
-        Long articleId = articleRepository.save(article).getId();
+        Long articleId = articleRepository.findAll().get(0).getId();
+        Long userId = userRepository.findAll().get(0).getId();
 
         // when
-        articleService.deleteArticle(articleId, new DeleteArticleDto(user.getId(), articleId));
+        articleService.deleteArticle(articleId, new DeleteArticleDto(userId, articleId));
 
         // then
-        assertNull(articleRepository.findById(articleId).orElse(null));
+        assertEquals(0, articleRepository.findAll().size());
     }
 
     @Test
     public void 게시물에댓글작성(){
         // given
-        User user = User.createUser("test", "test");
-        Article article = Article.createArticle("test", "test");
-        Long userId = userRepository.save(user).getId();
-        article.setUser(user);
-        Long articleId = articleRepository.save(article).getId();
+        Long articleId = articleRepository.findAll().get(0).getId();
+        Long userId = userRepository.findAll().get(0).getId();
 
         // when
         Long commentId = articleService.createComment(articleId, new CreateCommentDto(userId,"test2"));
@@ -146,11 +114,8 @@ public class ArticleServiceTest {
     @Test
     public void 게시물에댓글수정(){
         // given
-        User user = User.createUser("test", "test");
-        Article article = Article.createArticle("test", "test");
-        Long userId = userRepository.save(user).getId();
-        article.setUser(user);
-        Long articleId = articleRepository.save(article).getId();
+        Long articleId = articleRepository.findAll().get(0).getId();
+        Long userId = userRepository.findAll().get(0).getId();
 
         // when
         Long commentId = articleService.createComment(articleId, new CreateCommentDto(userId,"test2"));
@@ -163,11 +128,8 @@ public class ArticleServiceTest {
     @Test
     public void 게시물에댓글삭제(){
         // given
-        User user = User.createUser("test", "test");
-        Article article = Article.createArticle("test", "test");
-        Long userId = userRepository.save(user).getId();
-        article.setUser(user);
-        Long articleId = articleRepository.save(article).getId();
+        Long articleId = articleRepository.findAll().get(0).getId();
+        Long userId = userRepository.findAll().get(0).getId();
 
         // when
         Long commentId = articleService.createComment(articleId, new CreateCommentDto(userId,"test2"));
@@ -180,11 +142,8 @@ public class ArticleServiceTest {
     @Test
     public void 게시물에좋아요(){
         // given
-        User user = User.createUser("test", "test");
-        Article article = Article.createArticle("test", "test");
-        Long userId = userRepository.save(user).getId();
-        article.setUser(user);
-        Long articleId = articleRepository.save(article).getId();
+        Long articleId = articleRepository.findAll().get(0).getId();
+        Long userId = userRepository.findAll().get(0).getId();
 
         // when
         Long likeId = articleService.createLikes(articleId, new RequestLikeDto(userId));
@@ -201,12 +160,8 @@ public class ArticleServiceTest {
     @Test
     public void 게시물에좋아요취소() {
         // given
-        User user = User.createUser("test", "test");
-        Article article = Article.createArticle("test", "test");
-        Long userId = userRepository.save(user).getId();
-        User user1 = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));
-        article.setUser(user1);
-        Long articleId = articleRepository.save(article).getId();
+        Long articleId = articleRepository.findAll().get(0).getId();
+        Long userId = userRepository.findAll().get(0).getId();
 
         // when
         Long likeId = articleService.createLikes(articleId, new RequestLikeDto(userId));
