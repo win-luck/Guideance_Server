@@ -41,6 +41,10 @@ dependencies {
 
 	// redis dependency
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	// webclient dependency
+	implementation platform('org.springframework.boot:spring-boot-dependencies:2.5.4') // Replace with your Spring Boot version
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 tasks.named('test') {
