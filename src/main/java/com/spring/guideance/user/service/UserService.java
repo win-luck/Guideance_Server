@@ -40,7 +40,7 @@ public class UserService {
         return ResponseUserDto.from(user);
     }
 
-    // 중복 이메일 체크
+    // 중복 KeyCode 체크
     private void ValidateDuplicateUser(CreateUserDto createUserDto) {
         if(userRepository.existsByKeyCode(createUserDto.getKeyCode())) {
             throw new UserException(ResponseCode.USER_ALREADY_EXISTS);
@@ -136,5 +136,4 @@ public class UserService {
     private User getUserById(Long userId) {
         return userRepository.findById(userId).orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
     }
-
 }
