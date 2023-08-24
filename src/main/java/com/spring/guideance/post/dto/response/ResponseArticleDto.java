@@ -1,13 +1,13 @@
 package com.spring.guideance.post.dto.response;
 
 import com.spring.guideance.post.domain.Article;
-import lombok.Data;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Data
+@Getter
 public class ResponseArticleDto {
 
     private Long articleId;

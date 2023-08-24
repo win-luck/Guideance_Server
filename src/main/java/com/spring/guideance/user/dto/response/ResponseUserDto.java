@@ -1,9 +1,9 @@
 package com.spring.guideance.user.dto.response;
 
 import com.spring.guideance.user.domain.User;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class ResponseUserDto {
 
     private Long userId;

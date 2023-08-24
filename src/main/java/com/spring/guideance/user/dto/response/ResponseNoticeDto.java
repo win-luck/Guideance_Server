@@ -1,11 +1,11 @@
 package com.spring.guideance.user.dto.response;
 
 import com.spring.guideance.user.domain.UserNotice;
-import lombok.Data;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
 public class ResponseNoticeDto {
 
     private Long id;
