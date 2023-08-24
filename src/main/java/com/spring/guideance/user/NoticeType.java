@@ -6,8 +6,7 @@ import com.spring.guideance.util.exception.ResponseCode;
 public enum NoticeType {
     LIKE(1, "Like"),
     COMMENT(2, "Comment"),
-    TAG_SUB(3, "TagSub"),
-    DEFAULT(4, "Default");
+    TAG_SUB(3, "TagSub");
 
     private final int code;
     private final String description;
@@ -24,7 +23,7 @@ public enum NoticeType {
             }
         }
 
-        throw new NoticeException(ResponseCode.NOTICE_NOT_FOUND);
+        throw new NoticeException(ResponseCode.NOTICE_TYPE_WRONG);
     }
 
     public int getCode() {
