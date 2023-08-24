@@ -1,5 +1,8 @@
 package com.spring.guideance.user;
 
+import com.spring.guideance.util.exception.NoticeException;
+import com.spring.guideance.util.exception.ResponseCode;
+
 public enum NoticeType {
     LIKE(1, "Like"),
     COMMENT(2, "Comment"),
@@ -20,7 +23,8 @@ public enum NoticeType {
                 return noticeType;
             }
         }
-        return DEFAULT;
+
+        throw new NoticeException(ResponseCode.NOTICE_NOT_FOUND);
     }
 
     public int getCode() {
