@@ -29,15 +29,13 @@ public class AuthController {
         KakaoUserInfoResponse userInfo = kakaoUserInfo.getUserInfo(accessToken);
         log.info("회원 정보 입니다.{}", userInfo);
 
-        ResponseUserDto responseUserDto;
         if (userService.isAlreadyUser(userInfo.getId().toString())) {
             log.info("이미 가입된 회원입니다.");
-            return ApiResponse.success(userService.getUserByKeyCode(userInfo.getId().toString()), ResponseCode.USER_ALREADY_EXISTS.getMessage());
+            return ApiResponse.success(userService.getUserByKeyCode(userInfo.getId().toString()), ResponseCode.USER_LOGINED.getMessage());
         } else {
             log.info("회원가입을 진행합니다.");
             userService.createUser(new CreateUserDto(userInfo.getKakao_account().getProfile().getNickname(), userInfo.getId().toString(), userInfo.getKakao_account().getProfile().getProfile_image_url()));
             return ApiResponse.success(userService.getUserByKeyCode(userInfo.getId().toString()), ResponseCode.USER_CREATED.getMessage());
         }
     }
-
 }
