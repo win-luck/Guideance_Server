@@ -23,21 +23,21 @@ public class ArticleController {
     private final NoticeService noticeService;
 
     // 게시물 목록 조회 (제목, 내용, 작성자, 좋아요 수, 댓글 수) (페이징)
-    @GetMapping
-    public ApiResponse<Page<ResponseSimpleArticleDto>> getArticles(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
-        return ApiResponse.success(articleService.getArticles(PageRequest.of(page, size)), ResponseCode.ARTICLE_FOUND.getMessage());
+    @GetMapping("/list/user/{userId}")
+    public ApiResponse<Page<ResponseSimpleArticleDto>> getArticles(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size, @PathVariable Long userId) {
+        return ApiResponse.success(articleService.getArticles(PageRequest.of(page, size), userId), ResponseCode.ARTICLE_FOUND.getMessage());
     }
 
     // 특정 게시물 정보 조회 (제목, 내용, 댓글 목록, 좋아요 목록, 작성자, 작성일시)
     @GetMapping("/{articleId}")
-    public ApiResponse<ResponseArticleDto> getSingleArticle(@PathVariable Long articleId) {
-        return ApiResponse.success(articleService.getSingleArticle(articleId), ResponseCode.ARTICLE_FOUND.getMessage());
+    public ApiResponse<ResponseArticleDto> getSingleArticle(@PathVariable Long articleId, @RequestParam Long userId) {
+        return ApiResponse.success(articleService.getSingleArticle(articleId, userId), ResponseCode.ARTICLE_FOUND.getMessage());
     }
 
     // 게시물 검색 결과 조회 (페이징)
     @GetMapping("/search/{articleName}")
-    public ApiResponse<Page<ResponseSimpleArticleDto>> searchArticles(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size, @PathVariable String articleName) {
-        return ApiResponse.success(articleService.searchArticles(articleName, PageRequest.of(page, size)), ResponseCode.ARTICLE_FOUND.getMessage());
+    public ApiResponse<Page<ResponseSimpleArticleDto>> searchArticles(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size, @PathVariable String articleName, @RequestParam Long userId) {
+        return ApiResponse.success(articleService.searchArticles(articleName, PageRequest.of(page, size), userId), ResponseCode.ARTICLE_FOUND.getMessage());
     }
 
     // 게시물 작성
