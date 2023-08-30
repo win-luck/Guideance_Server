@@ -23,8 +23,8 @@ public class ArticleController {
     private final NoticeService noticeService;
 
     // 게시물 목록 조회 (제목, 내용, 작성자, 좋아요 수, 댓글 수) (페이징)
-    @GetMapping("/list/user/{userId}")
-    public ApiResponse<Page<ResponseSimpleArticleDto>> getArticles(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size, @PathVariable Long userId) {
+    @GetMapping
+    public ApiResponse<Page<ResponseSimpleArticleDto>> getArticles(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size, @RequestParam Long userId) {
         return ApiResponse.success(articleService.getArticles(PageRequest.of(page, size), userId), ResponseCode.ARTICLE_FOUND.getMessage());
     }
 
@@ -36,7 +36,7 @@ public class ArticleController {
 
     // 게시물 검색 결과 조회 (페이징)
     @GetMapping("/search/{articleName}")
-    public ApiResponse<Page<ResponseSimpleArticleDto>> searchArticles(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size, @PathVariable String articleName, @RequestParam Long userId) {
+    public ApiResponse<Page<ResponseSimpleArticleDto>> searchArticles(@PathVariable String articleName, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size, @RequestParam Long userId) {
         return ApiResponse.success(articleService.searchArticles(articleName, PageRequest.of(page, size), userId), ResponseCode.ARTICLE_FOUND.getMessage());
     }
 
