@@ -4,6 +4,7 @@ import com.spring.guideance.post.dto.response.ResponseCommentDto;
 import com.spring.guideance.post.dto.response.ResponseSimpleArticleDto;
 import com.spring.guideance.post.repository.ArticleRepository;
 import com.spring.guideance.post.repository.CommentRepository;
+import com.spring.guideance.post.repository.LikesRepository;
 import com.spring.guideance.tag.dto.ResponseTagDto;
 import com.spring.guideance.user.domain.User;
 import com.spring.guideance.user.dto.request.CreateUserDto;
@@ -31,6 +32,7 @@ public class UserService {
     private final ArticleRepository articleRepository;
     private final CommentRepository commentRepository;
     private final UserNoticeRepository userNoticeRepository;
+    private final LikesRepository likesRepository;
 
     // 회원가입
     @Transactional
@@ -93,7 +95,7 @@ public class UserService {
     public Page<ResponseSimpleArticleDto> getUserArticles(Long userId, Pageable pageable) {
         if (!isUserExists(userId)) throw new UserException(ResponseCode.USER_NOT_FOUND);
         return articleRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable)
-                .map(ResponseSimpleArticleDto::from);
+                .map(article -> ResponseSimpleArticleDto.from(article, likesRepository.existsByArticleIdAndUserId(article.getId(), userId)));
     }
 
     // 유저가 구독한 태그 조회
@@ -118,7 +120,7 @@ public class UserService {
     public Page<ResponseSimpleArticleDto> getUserLikesArticles(Long userId, Pageable pageable) {
         if (isUserExists(userId)) throw new UserException(ResponseCode.USER_NOT_FOUND);
         return articleRepository.findAllByLikesUserIdOrderByCreatedAtDesc(userId, pageable)
-                .map(ResponseSimpleArticleDto::from);
+                .map(article -> ResponseSimpleArticleDto.from(article, likesRepository.existsByArticleIdAndUserId(article.getId(), userId)));
     }
 
     // 유저가 작성한 댓글 조회 (페이징)

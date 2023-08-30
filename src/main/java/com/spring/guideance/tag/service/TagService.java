@@ -145,7 +145,10 @@ public class TagService {
                     User user = article.getUser();
                     int likeCount = article.getLikes().size(); // 좋아요 수
                     int commentCount = article.getComments().size(); // 댓글 수
-                    return ResponseSimpleArticleDto.of(article.getId(), article.getTitle(), article.getContents(), user.getName(), likeCount, commentCount);
+                    // 유저의 좋아요 여부
+                    boolean isLiked = article.getLikes().stream()
+                            .anyMatch(likes -> likes.getUser().getId().equals(user.getId()));
+                    return ResponseSimpleArticleDto.of(article.getId(), article.getTitle(), article.getContents(), user.getName(), likeCount, commentCount, isLiked);
                 })
                 .collect(Collectors.toList());
     }

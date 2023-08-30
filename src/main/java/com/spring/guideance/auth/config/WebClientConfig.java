@@ -16,6 +16,7 @@ import java.util.function.Function;
 
 @Configuration
 public class WebClientConfig {
+
     @Bean
     public ReactorResourceFactory resourceFactory() {
         ReactorResourceFactory factory = new ReactorResourceFactory();
