@@ -18,8 +18,9 @@ public class ResponseArticleDto {
     private List<ResponseLikeDto> likes;
     private List<ResponseCommentDto> comments;
     private LocalDateTime createdAt;
+    private boolean isLiked;
 
-    private ResponseArticleDto(Long articleId, String title, String contents, String authorName, List<String> tags, List<ResponseLikeDto> likes, List<ResponseCommentDto> comments, LocalDateTime createdAt) {
+    private ResponseArticleDto(Long articleId, String title, String contents, String authorName, List<String> tags, List<ResponseLikeDto> likes, List<ResponseCommentDto> comments, LocalDateTime createdAt, boolean isLiked) {
         this.articleId = articleId;
         this.title = title;
         this.contents = contents;
@@ -28,13 +29,14 @@ public class ResponseArticleDto {
         this.likes = likes;
         this.comments = comments;
         this.createdAt = createdAt;
+        this.isLiked = isLiked;
     }
 
-    public static ResponseArticleDto of(Long articleId, String title, String contents, String authorName, List<String> tags, List<ResponseLikeDto> likes, List<ResponseCommentDto> comments, LocalDateTime createdAt) {
-        return new ResponseArticleDto(articleId, title, contents, authorName, tags, likes, comments, createdAt);
+    public static ResponseArticleDto of(Long articleId, String title, String contents, String authorName, List<String> tags, List<ResponseLikeDto> likes, List<ResponseCommentDto> comments, LocalDateTime createdAt, boolean isLiked) {
+        return new ResponseArticleDto(articleId, title, contents, authorName, tags, likes, comments, createdAt, isLiked);
     }
 
-    public static ResponseArticleDto from(Article article) {
+    public static ResponseArticleDto from(Article article, boolean isLiked) {
         return ResponseArticleDto.of(
                 article.getId(),
                 article.getTitle(),
@@ -43,7 +45,8 @@ public class ResponseArticleDto {
                 article.getArticleTags().stream().map(articleTag -> articleTag.getTag().getTagName()).collect(Collectors.toList()),
                 article.getLikes().stream().map(ResponseLikeDto::from).collect(Collectors.toList()),
                 article.getComments().stream().map(ResponseCommentDto::from).collect(Collectors.toList()),
-                article.getCreatedAt()
+                article.getCreatedAt(),
+                isLiked
         );
     }
 }

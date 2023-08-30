@@ -28,25 +28,26 @@ public class ArticleService {
     private final LikesRepository likesRepository;
     private final UserRepository userRepository;
 
-    // 게시물 목록 조회 (제목, 내용, 작성자, 좋아요 수, 댓글 수) (페이징)
+    // 게시물 목록 조회 (제목, 내용, 작성자, 좋아요 수, 댓글 수, 유저의 좋아요누름여부) (페이징)
     @Transactional(readOnly = true)
-    public Page<ResponseSimpleArticleDto> getArticles(Pageable pageable) {
+    public Page<ResponseSimpleArticleDto> getArticles(Pageable pageable, Long userId) {
         return articleRepository.findAllByOrderByCreatedAtDesc(pageable)
-                .map(ResponseSimpleArticleDto::from);
+                .map(article -> ResponseSimpleArticleDto.from(article, likesRepository.existsByArticleIdAndUserId(article.getId(), userId)));
     }
 
     // 특정 게시물 정보 조회 (제목, 내용, 댓글 목록, 좋아요 목록, 작성자, 작성일시)
     @Transactional(readOnly = true)
-    public ResponseArticleDto getSingleArticle(Long articleId) {
+    public ResponseArticleDto getSingleArticle(Long articleId, Long userId) {
         Article article = getArticleById(articleId);
-        return ResponseArticleDto.from(article);
+        // 유저가 이 게시물에 좋아요를 눌렀는지 확인
+        return ResponseArticleDto.from(article, likesRepository.existsByArticleIdAndUserId(articleId, userId));
     }
 
     // 게시물 검색 결과 조회 (페이징)
     @Transactional(readOnly = true)
-    public Page<ResponseSimpleArticleDto> searchArticles(String keyword, Pageable pageable) {
+    public Page<ResponseSimpleArticleDto> searchArticles(String keyword, Pageable pageable, Long userId) {
         return articleRepository.findAllByTitleContaining(keyword, pageable)
-                .map(ResponseSimpleArticleDto::from);
+                .map(article -> ResponseSimpleArticleDto.from(article, likesRepository.existsByArticleIdAndUserId(article.getId(), userId)));
     }
 
     // 게시물 작성(태그 관련 로직은 추후 추가)
