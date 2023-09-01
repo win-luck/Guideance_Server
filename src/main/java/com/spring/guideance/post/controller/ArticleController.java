@@ -6,16 +6,18 @@ import com.spring.guideance.post.dto.response.ResponseSimpleArticleDto;
 import com.spring.guideance.post.service.ArticleService;
 import com.spring.guideance.tag.service.TagService;
 import com.spring.guideance.user.service.NoticeService;
+import com.spring.guideance.util.SizeUtil;
 import com.spring.guideance.util.api.ApiResponse;
 import com.spring.guideance.util.exception.ResponseCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/article")
 @RequiredArgsConstructor
+@RequestMapping("/api/article")
 public class ArticleController {
 
     private final ArticleService articleService;
@@ -24,8 +26,8 @@ public class ArticleController {
 
     // 게시물 목록 조회 (제목, 내용, 작성자, 좋아요 수, 댓글 수) (페이징)
     @GetMapping
-    public ApiResponse<Page<ResponseSimpleArticleDto>> getArticles(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size, @RequestParam Long userId) {
-        return ApiResponse.success(articleService.getArticles(PageRequest.of(page, size), userId), ResponseCode.ARTICLE_FOUND.getMessage());
+    public ApiResponse<Page<ResponseSimpleArticleDto>> getArticles(@PageableDefault(size = SizeUtil.SIZE.PAGE_MEDIUM) Pageable pageable, @RequestParam Long userId) {
+        return ApiResponse.success(articleService.getArticles(pageable, userId), ResponseCode.ARTICLE_FOUND.getMessage());
     }
 
     // 특정 게시물 정보 조회 (제목, 내용, 댓글 목록, 좋아요 목록, 작성자, 작성일시)
@@ -36,8 +38,8 @@ public class ArticleController {
 
     // 게시물 검색 결과 조회 (페이징)
     @GetMapping("/search/{articleName}")
-    public ApiResponse<Page<ResponseSimpleArticleDto>> searchArticles(@PathVariable String articleName, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size, @RequestParam Long userId) {
-        return ApiResponse.success(articleService.searchArticles(articleName, PageRequest.of(page, size), userId), ResponseCode.ARTICLE_FOUND.getMessage());
+    public ApiResponse<Page<ResponseSimpleArticleDto>> searchArticles(@PathVariable String articleName, @PageableDefault(size = SizeUtil.SIZE.PAGE_MEDIUM) Pageable pageable, @RequestParam Long userId) {
+        return ApiResponse.success(articleService.searchArticles(articleName, pageable, userId), ResponseCode.ARTICLE_FOUND.getMessage());
     }
 
     // 게시물 작성
@@ -99,5 +101,4 @@ public class ArticleController {
         articleService.deleteLikes(articleId, requestLikeDto);
         return ApiResponse.success(null, ResponseCode.LIKE_DELETED.getMessage());
     }
-
 }
