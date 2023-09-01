@@ -41,7 +41,7 @@ public class ArticleService {
         if (!userRepository.existsById(userId))
             throw new UserException(ResponseCode.USER_NOT_FOUND);
 
-        String cacheKey = "articles:page:" + pageable.getPageNumber() + ":size:" + pageable.getPageSize();
+        String cacheKey = "articles:page:" + pageable.getPageNumber() + ":size:" + pageable.getPageSize() + "userId:" + userId;
         if (Boolean.TRUE.equals(redisArticleTemplate.hasKey(cacheKey))) { // Redis 캐시에 데이터가 있는 경우
             List<ResponseSimpleArticleDto> cachedArticles = redisArticleTemplate.opsForList().range(cacheKey, 0, -1);
             if (cachedArticles != null)

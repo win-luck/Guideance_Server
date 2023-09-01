@@ -106,7 +106,7 @@ public class TagService {
         if (!userRepository.existsById(userId))
             throw new UserException(ResponseCode.USER_NOT_FOUND);
 
-        String cacheKey = "tags:page:" + pageable.getPageNumber() + ":size:" + pageable.getPageSize();
+        String cacheKey = "tags:page:" + pageable.getPageNumber() + ":size:" + pageable.getPageSize() + ":userId:" + userId;
         if (Boolean.TRUE.equals(redisTagTemplate.hasKey(cacheKey))) { // Redis 캐시에 데이터가 있는 경우
             List<ResponseTagDto> cachedTags = redisTagTemplate.opsForList().range(cacheKey, 0, -1);
             if (cachedTags != null)
