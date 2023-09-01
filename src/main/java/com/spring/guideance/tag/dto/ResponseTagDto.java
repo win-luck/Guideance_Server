@@ -1,10 +1,16 @@
 package com.spring.guideance.tag.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.spring.guideance.tag.domain.UserTag;
 import lombok.Getter;
 
+import java.io.Serializable;
+
 @Getter
-public class ResponseTagDto {
+@JsonSerialize
+@JsonDeserialize
+public class ResponseTagDto implements Serializable {
     
     private Long tagId;
     private String tagName;
