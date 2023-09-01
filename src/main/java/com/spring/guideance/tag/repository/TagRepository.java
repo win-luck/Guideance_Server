@@ -1,7 +1,7 @@
 package com.spring.guideance.tag.repository;
 
 import com.spring.guideance.tag.domain.Tag;
-import com.spring.guideance.util.SizeType;
+import com.spring.guideance.util.SizeUtil;
 import org.hibernate.annotations.BatchSize;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,11 +14,11 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
 
     Optional<Tag> findByTagName(String tagName);
 
-    @BatchSize(size = SizeType.SIZE.SMALL)
+    @BatchSize(size = SizeUtil.SIZE.SMALL)
     Page<Tag> findByTagNameContaining(String tagName, Pageable pageable);
 
     boolean existsByTagName(String tagName);
 
-    @BatchSize(size = SizeType.SIZE.SMALL)
+    @BatchSize(size = SizeUtil.SIZE.SMALL)
     List<Tag> findAll();
 }
