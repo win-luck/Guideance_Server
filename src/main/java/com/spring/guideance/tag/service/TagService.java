@@ -21,11 +21,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,6 +39,7 @@ public class TagService {
     private final TagRepository tagRepository;
     private final UserRepository userRepository;
     private final ArticleRepository articleRepository;
+    private final RedisTemplate<String, ResponseTagDto> redisTagTemplate;
 
     // 클라이언트가 보낸 게시물 생성 요청에서 태그 문자열 리스트를 받아서 순회하면서 새 태그를 생성하고, 게시물에 태그를 추가하는 메서드
     @Transactional
@@ -97,13 +100,25 @@ public class TagService {
         tagRepository.delete(tag);
     }
 
-    // 태그 목록 조회 (태그명, 게시물수, 좋아요수) (페이징)
+    // 태그 목록 조회 (태그명, 게시물수, 좋아요수) (페이징) (Redis 캐싱)
     @Transactional(readOnly = true)
     public Page<ResponseTagDto> getTagList(Long userId, Pageable pageable) {
         if (!userRepository.existsById(userId))
             throw new UserException(ResponseCode.USER_NOT_FOUND);
+
+        String cacheKey = "tags:page:" + pageable.getPageNumber() + ":size:" + pageable.getPageSize();
+        if (Boolean.TRUE.equals(redisTagTemplate.hasKey(cacheKey))) { // Redis 캐시에 데이터가 있는 경우
+            List<ResponseTagDto> cachedTags = redisTagTemplate.opsForList().range(cacheKey, 0, -1);
+            if (cachedTags != null)
+                return new PageImpl<>(cachedTags, pageable, cachedTags.size());
+        }
+
+        // Redis 캐시에 데이터가 없는 경우, 데이터베이스에서 조회 후 캐시에 저장
         List<ResponseTagDto> dtos = getResponseTagDtoList(userId, tagRepository.findAll());
-        // 추후 Redis를 사용해서 태그 목록을 캐싱하고, 캐싱된 데이터를 조회해서 반환해야 함
+
+        // Redis에 데이터를 저장하고 만료 시간 설정
+        redisTagTemplate.opsForList().rightPushAll(cacheKey, dtos.toArray(new ResponseTagDto[0]));
+        redisTagTemplate.expire(cacheKey, 5, TimeUnit.MINUTES);
         return new PageImpl<>(dtos, pageable, dtos.size());
     }
 
