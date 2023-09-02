@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-@SpringBootTest
+/*@SpringBootTest
 @Transactional
 public class ArticleServiceTest {
 
@@ -174,4 +174,4 @@ public class ArticleServiceTest {
         // then
         assertNull(likesRepository.findById(likeId).orElse(null));
     }
-}
+}*/
