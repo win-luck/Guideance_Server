@@ -54,10 +54,8 @@ public class User {
         return user;
     }
 
-    // 회원정보 수정
-    public void updateUser(String name, String profileImage) {
+    // 회원명 수정
+    public void updateUser(String name) {
         this.name = name;
-        this.profileImage = profileImage;
     }
-
 }
