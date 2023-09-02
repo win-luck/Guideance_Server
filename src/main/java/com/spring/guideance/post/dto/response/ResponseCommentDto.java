@@ -12,6 +12,7 @@ public class ResponseCommentDto {
     private Long articleId;
     private String articleTitle;
     private String authorName;
+    private String authorProfileImage;
     private String contents;
     private LocalDateTime createdAt;
 
@@ -20,6 +21,7 @@ public class ResponseCommentDto {
         this.articleId = comment.getArticle().getId();
         this.articleTitle = comment.getArticle().getTitle();
         this.authorName = comment.getUser().getName();
+        this.authorProfileImage = comment.getUser().getProfileImage();
         this.contents = comment.getContents();
         this.createdAt = comment.getCreatedAt();
     }
