@@ -13,11 +13,17 @@ import com.spring.guideance.user.domain.User;
 import com.spring.guideance.user.repository.UserRepository;
 import com.spring.guideance.util.exception.ArticleException;
 import com.spring.guideance.util.exception.ResponseCode;
+import com.spring.guideance.util.exception.UserException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -27,12 +33,32 @@ public class ArticleService {
     private final CommentRepository commentRepository;
     private final LikesRepository likesRepository;
     private final UserRepository userRepository;
+    private final RedisTemplate<String, ResponseSimpleArticleDto> redisArticleTemplate;
 
-    // 게시물 목록 조회 (제목, 내용, 작성자, 좋아요 수, 댓글 수, 유저의 좋아요누름여부) (페이징)
+    // 게시물 목록 조회 (제목, 내용, 작성자, 좋아요 수, 댓글 수, 유저의 좋아요누름여부) (페이징) (Redis 캐싱)
     @Transactional(readOnly = true)
     public Page<ResponseSimpleArticleDto> getArticles(Pageable pageable, Long userId) {
-        return articleRepository.findAllByOrderByCreatedAtDesc(pageable)
-                .map(article -> ResponseSimpleArticleDto.from(article, likesRepository.existsByArticleIdAndUserId(article.getId(), userId)));
+        if (!userRepository.existsById(userId))
+            throw new UserException(ResponseCode.USER_NOT_FOUND);
+
+        String cacheKey = "articles:page:" + pageable.getPageNumber() + ":size:" + pageable.getPageSize() + "userId:" + userId;
+        if (Boolean.TRUE.equals(redisArticleTemplate.hasKey(cacheKey))) { // Redis 캐시에 데이터가 있는 경우
+            List<ResponseSimpleArticleDto> cachedArticles = redisArticleTemplate.opsForList().range(cacheKey, 0, -1);
+            if (cachedArticles != null)
+                return new PageImpl<>(cachedArticles, pageable, cachedArticles.size());
+        }
+
+        // Redis 캐시에 데이터가 없는 경우, 데이터베이스에서 조회 후 캐시에 저장
+        Page<Article> articles = articleRepository.findAllByOrderByCreatedAtDesc(pageable);
+        List<ResponseSimpleArticleDto> responseSimpleArticleDtos = articles.map(article -> {
+            boolean isLiked = likesRepository.existsByArticleIdAndUserId(article.getId(), userId);
+            return ResponseSimpleArticleDto.from(article, isLiked);
+        }).getContent();
+
+        // Redis에 데이터를 저장하고 만료 시간 설정
+        redisArticleTemplate.opsForList().rightPushAll(cacheKey, responseSimpleArticleDtos.toArray(new ResponseSimpleArticleDto[0]));
+        redisArticleTemplate.expire(cacheKey, 5, TimeUnit.MINUTES); // 5분 후 만료
+        return new PageImpl<>(responseSimpleArticleDtos, pageable, responseSimpleArticleDtos.size());
     }
 
     // 특정 게시물 정보 조회 (제목, 내용, 댓글 목록, 좋아요 목록, 작성자, 작성일시)

@@ -53,8 +53,11 @@ public class ArticleServiceTest {
 
     @Test
     public void 게시물목록조회(){
+        // given
+        Long userId = userRepository.findAll().get(0).getId();
+
         // when
-        Page<ResponseSimpleArticleDto> responseArticleDtoList = articleService.getArticles(PageRequest.of(0, 10));
+        Page<ResponseSimpleArticleDto> responseArticleDtoList = articleService.getArticles(PageRequest.of(0, 10), userId);
 
         // then
         assertEquals( "test", responseArticleDtoList.getContent().get(0).getTitle());
@@ -63,10 +66,11 @@ public class ArticleServiceTest {
     @Test
     public void 게시물생성및상세조회(){
         // given
+        Long userId = userRepository.findAll().get(0).getId();
         Long articleId = articleRepository.findAll().get(0).getId();
 
         // when
-        ResponseArticleDto responseArticleDto = articleService.getSingleArticle(articleId);
+        ResponseArticleDto responseArticleDto = articleService.getSingleArticle(articleId, userId);
 
         // then
         assertEquals(responseArticleDto.getTitle(), "test");

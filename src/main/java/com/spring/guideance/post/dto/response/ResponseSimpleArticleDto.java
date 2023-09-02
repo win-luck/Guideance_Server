@@ -1,10 +1,16 @@
 package com.spring.guideance.post.dto.response;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.spring.guideance.post.domain.Article;
 import lombok.Getter;
 
+import java.io.Serializable;
+
 @Getter
-public class ResponseSimpleArticleDto {
+@JsonSerialize
+@JsonDeserialize
+public class ResponseSimpleArticleDto implements Serializable {
 
     private Long articleId;
     private String title;
