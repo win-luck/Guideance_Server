@@ -7,11 +7,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UpdateCommentDto {
 
-    private Long userId;
     private String contents;
 
-    public UpdateCommentDto(Long userId, String contents) {
-        this.userId = userId;
+    public UpdateCommentDto(String contents) {
         this.contents = contents;
     }
 }

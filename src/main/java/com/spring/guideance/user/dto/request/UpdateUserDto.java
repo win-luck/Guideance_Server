@@ -7,11 +7,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UpdateUserDto {
 
-    private Long userId;
     private String userName;
 
-    public UpdateUserDto(Long userId, String userName) {
-        this.userId = userId;
+    public UpdateUserDto(String userName) {
         this.userName = userName;
     }
 }

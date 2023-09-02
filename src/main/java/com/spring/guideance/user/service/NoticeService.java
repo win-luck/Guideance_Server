@@ -38,7 +38,6 @@ public class NoticeService {
     /**
      * 알림 생성+전송 기능
      */
-
     // 특정 게시물의 주인 user에게 누군가 좋아요를 눌렀음을 알림
     // ???님이 내 게시물에 좋아요를 눌렀습니다.
     // [게시물 제목]
@@ -88,17 +87,19 @@ public class NoticeService {
     /**
      * 알림 조회/삭제/읽음 관련 기능
      */
-
     // 특정 user가 받은 특정 알림 삭제 -> UserController에서 사용
     @Transactional
-    public void deleteUserNotice(Long userNoticeId) {
+    public void deleteUserNotice(Long userId, Long userNoticeId) {
+        UserNotice userNotice = userNoticeRepository.findById(userNoticeId).orElseThrow(() -> new NoticeException(ResponseCode.NOTICE_NOT_FOUND));
+        if(!userNotice.getUser().getId().equals(userId)) throw new NoticeException(ResponseCode.FORBIDDEN);
         userNoticeRepository.deleteById(userNoticeId);
     }
 
     // 특정 user가 받은 특정 알림을 읽음 -> UserController에서 사용
     @Transactional
-    public void readUserNotice(Long userNoticeId) {
+    public void readUserNotice(Long userId, Long userNoticeId) {
         UserNotice userNotice = userNoticeRepository.findById(userNoticeId).orElseThrow(() -> new NoticeException(ResponseCode.NOTICE_NOT_FOUND));
+        if(!userNotice.getUser().getId().equals(userId)) throw new NoticeException(ResponseCode.FORBIDDEN);
         userNotice.read();
     }
 
@@ -114,5 +115,4 @@ public class NoticeService {
         List<UserNotice> userNotices = userNoticeRepository.findByNoticeId(noticeId);
         return userNotices.stream().map(userNotice -> ResponseUserDto.from(userNotice.getUser())).collect(Collectors.toList());
     }
-
 }

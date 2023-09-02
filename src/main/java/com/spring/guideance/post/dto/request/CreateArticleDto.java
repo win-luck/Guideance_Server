@@ -9,13 +9,11 @@ import java.util.List;
 @NoArgsConstructor
 public class CreateArticleDto {
 
-    private Long userId;
     private String title;
     private String contents;
     private List<String> tags;
 
-    public CreateArticleDto(Long userId, String title, String contents, List<String> tags) {
-        this.userId = userId;
+    public CreateArticleDto(String title, String contents, List<String> tags) {
         this.title = title;
         this.contents = contents;
         this.tags = tags;
