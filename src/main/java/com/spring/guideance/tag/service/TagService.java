@@ -163,7 +163,7 @@ public class TagService {
                     // 유저의 좋아요 여부
                     boolean isLiked = article.getLikes().stream()
                             .anyMatch(likes -> likes.getUser().getId().equals(user.getId()));
-                    return ResponseSimpleArticleDto.of(article.getId(), article.getTitle(), article.getContents(), user.getName(), likeCount, commentCount, isLiked);
+                    return ResponseSimpleArticleDto.of(article.getId(), article.getTitle(), article.getContents(), user.getName(), user.getProfileImage(), likeCount, commentCount, article.getCreatedAt(), isLiked);
                 })
                 .collect(Collectors.toList());
     }

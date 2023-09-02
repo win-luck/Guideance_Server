@@ -6,6 +6,7 @@ import com.spring.guideance.post.domain.Article;
 import lombok.Getter;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Getter
 @JsonSerialize
@@ -16,17 +17,21 @@ public class ResponseSimpleArticleDto implements Serializable {
     private String title;
     private String contents;
     private String authorName;
+    private String authorProfileImage;
     private int likesCount;
     private int commentCount;
+    private LocalDateTime createdAt;
     private boolean isLiked;
 
-    private ResponseSimpleArticleDto(Long articleId, String title, String contents, String authorName, int likesCount, int commentCount, boolean isLiked) {
+    private ResponseSimpleArticleDto(Long articleId, String title, String contents, String authorName, String authorProfileImage, int likesCount, int commentCount, LocalDateTime createdAt, boolean isLiked) {
         this.articleId = articleId;
         this.title = title;
         this.contents = contents;
         this.authorName = authorName;
+        this.authorProfileImage = authorProfileImage;
         this.likesCount = likesCount;
         this.commentCount = commentCount;
+        this.createdAt = createdAt;
         this.isLiked = isLiked;
     }
 
@@ -35,8 +40,10 @@ public class ResponseSimpleArticleDto implements Serializable {
         this.title = article.getTitle();
         this.contents = article.getContents();
         this.authorName = article.getUser().getName();
+        this.authorProfileImage = article.getUser().getProfileImage();
         this.likesCount = article.getLikes().size();
         this.commentCount = article.getComments().size();
+        this.createdAt = article.getCreatedAt();
         this.isLiked = isLiked;
     }
 
@@ -44,7 +51,7 @@ public class ResponseSimpleArticleDto implements Serializable {
         return new ResponseSimpleArticleDto(article, isLiked);
     }
 
-    public static ResponseSimpleArticleDto of(Long articleId, String title, String contents, String authorName, int likesCount, int commentCount, boolean isLiked) {
-        return new ResponseSimpleArticleDto(articleId, title, contents, authorName, likesCount, commentCount, isLiked);
+    public static ResponseSimpleArticleDto of(Long articleId, String title, String contents, String authorName, String authorProfileImage, int likesCount, int commentCount, LocalDateTime createdAt, boolean isLiked) {
+        return new ResponseSimpleArticleDto(articleId, title, contents, authorName, authorProfileImage, likesCount, commentCount, createdAt, isLiked);
     }
 }
