@@ -78,17 +78,17 @@ public class ArticleService {
 
     // 게시물 작성(태그 관련 로직은 추후 추가)
     @Transactional
-    public Long createArticle(CreateArticleDto articleDto) {
+    public Long createArticle(CreateArticleDto articleDto, Long userId) {
         Article article = Article.createArticle(articleDto.getTitle(), articleDto.getContents());
-        User user = getUserById(articleDto.getUserId());
+        User user = getUserById(userId);
         article.setUser(user);
         return articleRepository.save(article).getId();
     }
 
     // 게시물 수정
     @Transactional
-    public void updateArticle(Long articleId, UpdateArticleDto articleDto) {
-        Article article = authorCheckAndBringArticle(articleId, articleDto.getUserId());
+    public void updateArticle(Long articleId, UpdateArticleDto articleDto, Long userId) {
+        Article article = authorCheckAndBringArticle(articleId, userId);
         // 태그는 일단 수정 불가능하도록 설정
         article.updateArticle(articleDto.getTitle(), articleDto.getContents());
         articleRepository.save(article);
@@ -96,8 +96,8 @@ public class ArticleService {
 
     // 게시물 삭제
     @Transactional
-    public void deleteArticle(Long articleId, DeleteArticleDto articleDto) {
-        Article article = authorCheckAndBringArticle(articleId, articleDto.getUserId());
+    public void deleteArticle(Long articleId, Long userId) {
+        Article article = authorCheckAndBringArticle(articleId, userId);
         articleRepository.delete(article);
     }
 
@@ -111,17 +111,17 @@ public class ArticleService {
 
     // 게시물에 댓글 작성
     @Transactional
-    public Long createComment(Long articleId, CreateCommentDto commentDto) {
+    public Long createComment(Long articleId, CreateCommentDto commentDto, Long userId) {
         Article article = getArticleById(articleId);
-        User user = getUserById(commentDto.getUserId());
+        User user = getUserById(userId);
         Comment comment = Comment.createComment(commentDto.getContents(), user, article);
         return commentRepository.save(comment).getId();
     }
 
     // 게시물에 댓글 수정
     @Transactional
-    public void updateComment(Long commentId, UpdateCommentDto commentDto) {
-        Comment comment = authorCheckAndBringComment(commentId, commentDto.getUserId());
+    public void updateComment(Long commentId, UpdateCommentDto commentDto, Long userId) {
+        Comment comment = authorCheckAndBringComment(commentId, userId);
         comment.updateComment(commentDto.getContents());
         commentRepository.save(comment);
     }
@@ -143,10 +143,10 @@ public class ArticleService {
 
     // 게시물에 좋아요
     @Transactional
-    public Long createLikes(Long articleId, RequestLikeDto likeDto) {
+    public Long createLikes(Long articleId, Long userId) {
         Article article = getArticleById(articleId);
-        User user = getUserById(likeDto.getUserId());
-        if (likesRepository.existsByArticleIdAndUserId(articleId, likeDto.getUserId()))
+        User user = getUserById(userId);
+        if (likesRepository.existsByArticleIdAndUserId(articleId, userId))
             throw new ArticleException(ResponseCode.LIKE_ALREADY_EXISTS);
         Likes likes = Likes.createLikes(article, user);
         return likesRepository.save(likes).getId();
@@ -154,8 +154,8 @@ public class ArticleService {
 
     // 게시물에 좋아요 취소
     @Transactional
-    public void deleteLikes(Long articleId, RequestLikeDto likeDto) {
-        Likes likes = likesRepository.findByArticleIdAndUserId(articleId, likeDto.getUserId()).orElseThrow(() -> new ArticleException(ResponseCode.LIKE_NOT_FOUND));
+    public void deleteLikes(Long articleId, Long userId) {
+        Likes likes = likesRepository.findByArticleIdAndUserId(articleId, userId).orElseThrow(() -> new ArticleException(ResponseCode.LIKE_NOT_FOUND));
         likesRepository.delete(likes);
     }
 
