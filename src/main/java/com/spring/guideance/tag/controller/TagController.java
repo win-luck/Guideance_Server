@@ -39,27 +39,27 @@ public class TagController {
     }
 
     // 태그 검색 결과 조회 (페이징)
-    @GetMapping("/search/{tagName}/user/{userId}")
-    public ApiResponse<Page<ResponseTagDto>> searchTag(@PageableDefault(size = SizeUtil.SIZE.PAGE_MEDIUM) Pageable pageable, @PathVariable String tagName, @PathVariable Long userId) {
+    @GetMapping("/search/{tagName}")
+    public ApiResponse<Page<ResponseTagDto>> searchTag(@RequestHeader("userId") Long userId, @PathVariable String tagName, @PageableDefault(size = SizeUtil.SIZE.PAGE_MEDIUM) Pageable pageable) {
         return ApiResponse.success(tagService.searchTag(userId, tagName, pageable), ResponseCode.TAG_FOUND.getMessage());
     }
 
     // 태그 목록 조회 (태그명, 게시물수, 좋아요수) - 유저가 구독한 태그가 앞에 오도록, 가장 최신으로 구독한 태그가 앞에 오도록 정렬 (페이징)
-    @GetMapping("/list/{userId}")
-    public ApiResponse<Page<ResponseTagDto>> getTagList(@PageableDefault(size = SizeUtil.SIZE.PAGE_MEDIUM) Pageable pageable, @PathVariable Long userId) {
+    @GetMapping("/list")
+    public ApiResponse<Page<ResponseTagDto>> getTagList(@RequestHeader("userId") Long userId, @PageableDefault(size = SizeUtil.SIZE.PAGE_MEDIUM) Pageable pageable) {
         return ApiResponse.success(tagService.getTagList(userId, pageable), ResponseCode.TAG_FOUND.getMessage());
     }
 
     // 유저가 태그를 구독
-    @PostMapping("{tagId}/user/{userId}")
-    public ApiResponse<Void> subscribeTag(@PathVariable Long userId, @PathVariable Long tagId) {
+    @PostMapping("{tagId}/subscribe")
+    public ApiResponse<Void> subscribeTag(@RequestHeader("userId") Long userId, @PathVariable Long tagId) {
         tagService.subscribeTag(userId, tagId);
         return ApiResponse.success(null, ResponseCode.TAG_SUBSCRIBED.getMessage());
     }
 
     // 유저가 태그 구독 취소
-    @PostMapping("{tagId}/user/{userId}/cancel")
-    public ApiResponse<Void> unsubscribeTag(@PathVariable Long userId, @PathVariable Long tagId) {
+    @PostMapping("{tagId}/subscribe/cancel")
+    public ApiResponse<Void> unsubscribeTag(@RequestHeader("userId") Long userId, @PathVariable Long tagId) {
         tagService.unsubscribeTag(userId, tagId);
         return ApiResponse.success(null, ResponseCode.TAG_UNSUBSCRIBED.getMessage());
     }
