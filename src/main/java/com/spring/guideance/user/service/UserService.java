@@ -8,7 +8,6 @@ import com.spring.guideance.post.repository.LikesRepository;
 import com.spring.guideance.tag.dto.ResponseTagDto;
 import com.spring.guideance.user.domain.User;
 import com.spring.guideance.user.dto.request.CreateUserDto;
-import com.spring.guideance.user.dto.request.UpdateUserDto;
 import com.spring.guideance.user.dto.response.ResponseNoticeDto;
 import com.spring.guideance.user.dto.response.ResponseUserDto;
 import com.spring.guideance.user.repository.UserNoticeRepository;
@@ -36,10 +35,15 @@ public class UserService {
 
     // 회원가입
     @Transactional
-    public ResponseUserDto createUser(CreateUserDto createUserDto) {
+    public void createUser(CreateUserDto createUserDto) {
         ValidateDuplicateUser(createUserDto);
-        User user = userRepository.save(User.createUser(createUserDto.getName(), createUserDto.getKeyCode(), createUserDto.getProfileImage()));
-        return ResponseUserDto.from(user);
+        userRepository.save(User.createUser(createUserDto.getName(), createUserDto.getKeyCode(), createUserDto.getProfileImage()));
+    }
+
+    // 회원 중복 체크
+    @Transactional(readOnly = true)
+    public boolean isAlreadyUser(String keyCode) {
+        return userRepository.existsByKeyCode(keyCode);
     }
 
     // 중복 KeyCode 체크
@@ -49,37 +53,24 @@ public class UserService {
         }
     }
 
-    // 로그인
-    @Transactional
-    public ResponseUserDto login(String key) {
-        User user = userRepository.findByKeyCode(key).orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
-        return ResponseUserDto.from(user);
-    }
-
-    // 회원정보 조회
+    // 회원정보 조회 by 유저별 id
     @Transactional(readOnly = true)
     public ResponseUserDto getUser(Long userId) {
         User user = getUserById(userId);
         return ResponseUserDto.from(user);
     }
 
-    // 회원 중복 체크
-    @Transactional(readOnly = true)
-    public boolean isAlreadyUser(String keyCode) {
-        return userRepository.existsByKeyCode(keyCode);
-    }
-
-    // 회원정보 조회 (유저별 키코드)
+    // 회원정보 조회 by 유저별 keyCode
     @Transactional(readOnly = true)
     public ResponseUserDto getUserByKeyCode(String keyCode) {
         return ResponseUserDto.from(userRepository.findByKeyCode(keyCode).orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND)));
     }
 
-    // 회원정보 수정(이름/프사 변경)
+    // 회원명 수정
     @Transactional
-    public void updateUser(UpdateUserDto updateUserDto, String imageUrl) {
-        User user = getUserById(updateUserDto.getUserId());
-        user.updateUser(updateUserDto.getUserName(), imageUrl);
+    public void updateUser(Long userId, String newName) {
+        User user = getUserById(userId);
+        user.updateUser(newName);
         userRepository.save(user);
     }
 
