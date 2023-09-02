@@ -26,26 +26,26 @@ public class ArticleController {
 
     // 게시물 목록 조회 (제목, 내용, 작성자, 좋아요 수, 댓글 수) (페이징)
     @GetMapping
-    public ApiResponse<Page<ResponseSimpleArticleDto>> getArticles(@PageableDefault(size = SizeUtil.SIZE.PAGE_MEDIUM) Pageable pageable, @RequestParam Long userId) {
+    public ApiResponse<Page<ResponseSimpleArticleDto>> getArticles(@RequestHeader("userId") Long userId, @PageableDefault(size = SizeUtil.SIZE.PAGE_MEDIUM) Pageable pageable) {
         return ApiResponse.success(articleService.getArticles(pageable, userId), ResponseCode.ARTICLE_FOUND.getMessage());
     }
 
     // 특정 게시물 정보 조회 (제목, 내용, 댓글 목록, 좋아요 목록, 작성자, 작성일시)
     @GetMapping("/{articleId}")
-    public ApiResponse<ResponseArticleDto> getSingleArticle(@PathVariable Long articleId, @RequestParam Long userId) {
+    public ApiResponse<ResponseArticleDto> getSingleArticle(@RequestHeader("userId") Long userId, @PathVariable Long articleId) {
         return ApiResponse.success(articleService.getSingleArticle(articleId, userId), ResponseCode.ARTICLE_FOUND.getMessage());
     }
 
     // 게시물 검색 결과 조회 (페이징)
     @GetMapping("/search/{articleName}")
-    public ApiResponse<Page<ResponseSimpleArticleDto>> searchArticles(@PathVariable String articleName, @PageableDefault(size = SizeUtil.SIZE.PAGE_MEDIUM) Pageable pageable, @RequestParam Long userId) {
+    public ApiResponse<Page<ResponseSimpleArticleDto>> searchArticles(@RequestHeader("userId") Long userId, @PathVariable String articleName, @PageableDefault(size = SizeUtil.SIZE.PAGE_MEDIUM) Pageable pageable) {
         return ApiResponse.success(articleService.searchArticles(articleName, pageable, userId), ResponseCode.ARTICLE_FOUND.getMessage());
     }
 
     // 게시물 작성
     @PostMapping
-    public ApiResponse<Long> createArticle(@RequestBody CreateArticleDto articleDto) {
-        Long articleId = articleService.createArticle(articleDto);
+    public ApiResponse<Long> createArticle(@RequestHeader("userId") Long userId, @RequestBody CreateArticleDto articleDto) {
+        Long articleId = articleService.createArticle(articleDto, userId);
         tagService.addTagToArticle(articleId, articleDto.getTags());
         noticeService.sendNoticeForNewArticle(articleId); // 게시물이 가진 태그들을 구독하는 사람들에게 알림전송
         return ApiResponse.success(articleId, ResponseCode.ARTICLE_CREATED.getMessage());
@@ -53,52 +53,52 @@ public class ArticleController {
 
     // 게시물 수정
     @PutMapping("/{articleId}")
-    public ApiResponse<Void> updateArticle(@PathVariable Long articleId, @RequestBody UpdateArticleDto articleDto) {
-        articleService.updateArticle(articleId, articleDto);
+    public ApiResponse<Void> updateArticle(@RequestHeader("userId") Long userId, @PathVariable Long articleId, @RequestBody UpdateArticleDto articleDto) {
+        articleService.updateArticle(articleId, articleDto, userId);
         return ApiResponse.success(null, ResponseCode.ARTICLE_UPDATED.getMessage());
     }
 
     // 게시물 삭제
     @DeleteMapping("/{articleId}")
-    public ApiResponse<Void> deleteArticle(@PathVariable Long articleId, @RequestBody DeleteArticleDto articleDto) {
-        articleService.deleteArticle(articleId, articleDto);
+    public ApiResponse<Void> deleteArticle(@RequestHeader("userId") Long userId, @PathVariable Long articleId) {
+        articleService.deleteArticle(articleId, userId);
         return ApiResponse.success(null, ResponseCode.ARTICLE_DELETED.getMessage());
     }
 
     // 게시물에 댓글 작성
     @PostMapping("/{articleId}/comment")
-    public ApiResponse<Long> createComment(@PathVariable Long articleId, @RequestBody CreateCommentDto commentDto) {
-        Long commentId = articleService.createComment(articleId, commentDto);
+    public ApiResponse<Long> createComment(@RequestHeader("userId") Long userId, @PathVariable Long articleId, @RequestBody CreateCommentDto commentDto) {
+        Long commentId = articleService.createComment(articleId, commentDto, userId);
         noticeService.sendNoticeForComment(commentId); // 게시물 작성자에게 댓글 알림전송
         return ApiResponse.success(commentId, ResponseCode.COMMENT_CREATED.getMessage());
     }
 
     // 게시물에 댓글 수정
     @PutMapping("/comment/{commentId}")
-    public ApiResponse<Void> updateComment(@PathVariable Long commentId, @RequestBody UpdateCommentDto commentDto) {
-        articleService.updateComment(commentId, commentDto);
+    public ApiResponse<Void> updateComment(@RequestHeader("userId") Long userId, @PathVariable Long commentId, @RequestBody UpdateCommentDto commentDto) {
+        articleService.updateComment(commentId, commentDto, userId);
         return ApiResponse.success(null, ResponseCode.COMMENT_UPDATED.getMessage());
     }
 
     // 게시물에 댓글 삭제
     @DeleteMapping("/comment/{commentId}/delete")
-    public ApiResponse<Void> deleteComment(@PathVariable Long commentId, @RequestBody DeleteCommentDto commentDto) {
-        articleService.deleteComment(commentId, commentDto.getUserId());
+    public ApiResponse<Void> deleteComment(@RequestHeader("userId") Long userId, @PathVariable Long commentId) {
+        articleService.deleteComment(commentId, userId);
         return ApiResponse.success(null, ResponseCode.COMMENT_DELETED.getMessage());
     }
 
     // 게시물에 좋아요
     @PostMapping("/{articleId}/like")
-    public ApiResponse<Long> like(@PathVariable Long articleId, @RequestBody RequestLikeDto requestLikeDto) {
-        Long likeId = articleService.createLikes(articleId, requestLikeDto);
+    public ApiResponse<Long> like(@RequestHeader("userId") Long userId, @PathVariable Long articleId) {
+        Long likeId = articleService.createLikes(articleId, userId);
         noticeService.sendNoticeForLike(likeId); // 게시물 작성자에게 좋아요 알림전송
         return ApiResponse.success(likeId, ResponseCode.LIKE_CREATED.getMessage());
     }
 
     // 게시물에 좋아요 취소
     @PostMapping("/{articleId}/like/cancel")
-    public ApiResponse<Void> cancelLike(@PathVariable Long articleId, @RequestBody RequestLikeDto requestLikeDto) {
-        articleService.deleteLikes(articleId, requestLikeDto);
+    public ApiResponse<Void> cancelLike(@RequestHeader("userId") Long userId, @PathVariable Long articleId) {
+        articleService.deleteLikes(articleId, userId);
         return ApiResponse.success(null, ResponseCode.LIKE_DELETED.getMessage());
     }
 }
