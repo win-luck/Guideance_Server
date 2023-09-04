@@ -18,6 +18,7 @@ import com.spring.guideance.util.exception.ArticleException;
 import com.spring.guideance.util.exception.TagException;
 import com.spring.guideance.util.exception.UserException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TagService {
 
     private final UserTagRepository userTagRepository;
@@ -106,6 +108,7 @@ public class TagService {
         if (!userRepository.existsById(userId))
             throw new UserException(ResponseCode.USER_NOT_FOUND);
 
+        log.info("Redis 캐시에 데이터가 있는지 확인");
         String cacheKey = "tags:page:" + pageable.getPageNumber() + ":size:" + pageable.getPageSize() + ":userId:" + userId;
         if (Boolean.TRUE.equals(redisTagTemplate.hasKey(cacheKey))) { // Redis 캐시에 데이터가 있는 경우
             List<ResponseTagDto> cachedTags = redisTagTemplate.opsForList().range(cacheKey, 0, -1);
@@ -113,9 +116,12 @@ public class TagService {
                 return new PageImpl<>(cachedTags, pageable, cachedTags.size());
         }
 
+        log.info("Redis 캐시에 데이터가 없으므로 데이터베이스에서 조회 후 캐시에 저장");
         // Redis 캐시에 데이터가 없는 경우, 데이터베이스에서 조회 후 캐시에 저장
         List<ResponseTagDto> dtos = getResponseTagDtoList(userId, tagRepository.findAll());
+        if(dtos.isEmpty()) return new PageImpl<>(List.of(), pageable, 0L); // 태그가 없는 경우 null을 반환하지 않고 빈 페이지를 반환
 
+        log.info("Redis 캐시에 데이터 저장");
         // Redis에 데이터를 저장하고 만료 시간 설정
         redisTagTemplate.opsForList().rightPushAll(cacheKey, dtos.toArray(new ResponseTagDto[0]));
         redisTagTemplate.expire(cacheKey, 5, TimeUnit.MINUTES);
