@@ -15,6 +15,7 @@ import com.spring.guideance.util.exception.ArticleException;
 import com.spring.guideance.util.exception.ResponseCode;
 import com.spring.guideance.util.exception.UserException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ArticleService {
 
     private final ArticleRepository articleRepository;
@@ -41,6 +43,7 @@ public class ArticleService {
         if (!userRepository.existsById(userId))
             throw new UserException(ResponseCode.USER_NOT_FOUND);
 
+        log.info("Redis 캐시에 데이터가 있는지 확인 시작");
         String cacheKey = "articles:page:" + pageable.getPageNumber() + ":size:" + pageable.getPageSize() + "userId:" + userId;
         if (Boolean.TRUE.equals(redisArticleTemplate.hasKey(cacheKey))) { // Redis 캐시에 데이터가 있는 경우
             List<ResponseSimpleArticleDto> cachedArticles = redisArticleTemplate.opsForList().range(cacheKey, 0, -1);
@@ -48,13 +51,17 @@ public class ArticleService {
                 return new PageImpl<>(cachedArticles, pageable, cachedArticles.size());
         }
 
+        log.info("Redis 캐시에 데이터가 없으므로 데이터베이스에서 조회 후 캐시에 저장 시작");
         // Redis 캐시에 데이터가 없는 경우, 데이터베이스에서 조회 후 캐시에 저장
         Page<Article> articles = articleRepository.findAllByOrderByCreatedAtDesc(pageable);
+        if(articles.isEmpty()) return new PageImpl<>(List.of(), pageable, 0L); // 게시물이 없는 경우 null을 반환하지 않고 빈 페이지를 반환
+
         List<ResponseSimpleArticleDto> responseSimpleArticleDtos = articles.map(article -> {
             boolean isLiked = likesRepository.existsByArticleIdAndUserId(article.getId(), userId);
             return ResponseSimpleArticleDto.from(article, isLiked);
         }).getContent();
 
+        log.info("Redis 캐시에 데이터 저장 시작");
         // Redis에 데이터를 저장하고 만료 시간 설정
         redisArticleTemplate.opsForList().rightPushAll(cacheKey, responseSimpleArticleDtos.toArray(new ResponseSimpleArticleDto[0]));
         redisArticleTemplate.expire(cacheKey, 5, TimeUnit.MINUTES); // 5분 후 만료
