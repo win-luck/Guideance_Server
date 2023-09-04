@@ -1,4 +1,4 @@
-package com.spring.guideance.auth.config;
+package com.spring.guideance.config;
 
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
