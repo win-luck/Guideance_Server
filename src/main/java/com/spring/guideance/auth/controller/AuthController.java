@@ -7,10 +7,13 @@ import com.spring.guideance.user.dto.response.ResponseUserDto;
 import com.spring.guideance.user.service.UserService;
 import com.spring.guideance.util.api.ApiResponse;
 import com.spring.guideance.util.exception.ResponseCode;
+import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+@Api(tags = "1. Auth")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
@@ -20,6 +23,7 @@ public class AuthController {
     private final UserService userService;
     private final KakaoUserInfo kakaoUserInfo;
 
+    @Operation(summary = "카카오 로그인", description = "카카오 소셜로그인을 진행합니다.")
     @PostMapping
     @ResponseBody
     public ApiResponse<ResponseUserDto> kakaoOauth(@RequestParam("token") String accessToken) {
