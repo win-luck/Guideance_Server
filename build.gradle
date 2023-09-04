@@ -47,6 +47,10 @@ dependencies {
 	// webclient dependency
 	implementation platform('org.springframework.boot:spring-boot-dependencies:2.5.4') // Replace with your Spring Boot version
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	// swagger dependency
+	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+	implementation 'io.springfox:springfox-swagger-ui:3.0.0'
 }
 
 tasks.named('test') {
