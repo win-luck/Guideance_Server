@@ -1,6 +1,8 @@
 package com.spring.guideance.post.dto.response;
 
 import com.spring.guideance.post.domain.Article;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -8,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ResponseArticleDto {
 
     private Long articleId;
@@ -20,19 +23,6 @@ public class ResponseArticleDto {
     private List<ResponseCommentDto> comments;
     private LocalDateTime createdAt;
     private boolean isLiked;
-
-    private ResponseArticleDto(Long articleId, String title, String contents, String authorName, String authorProfileImage, List<String> tags, List<ResponseLikeDto> likes, List<ResponseCommentDto> comments, LocalDateTime createdAt, boolean isLiked) {
-        this.articleId = articleId;
-        this.title = title;
-        this.contents = contents;
-        this.authorName = authorName;
-        this.authorProfileImage = authorProfileImage;
-        this.tags = tags;
-        this.likes = likes;
-        this.comments = comments;
-        this.createdAt = createdAt;
-        this.isLiked = isLiked;
-    }
 
     public static ResponseArticleDto of(Long articleId, String title, String contents, String authorName, String authorProfileImage, List<String> tags, List<ResponseLikeDto> likes, List<ResponseCommentDto> comments, LocalDateTime createdAt, boolean isLiked) {
         return new ResponseArticleDto(articleId, title, contents, authorName, authorProfileImage, tags, likes, comments, createdAt, isLiked);
