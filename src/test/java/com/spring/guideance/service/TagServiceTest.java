@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Transactional
-public class TagServiceTest {
+class TagServiceTest {
 
     @Autowired
     TagService tagService;
@@ -44,7 +44,7 @@ public class TagServiceTest {
     ArticleRepository articleRepository;
 
     @BeforeEach
-    public void init(){
+    void init(){
         userTagRepository.deleteAll();
         articleTagRepository.deleteAll();
         tagRepository.deleteAll();
@@ -54,7 +54,7 @@ public class TagServiceTest {
 
     // 태그 생성
     @Test
-    public void 태그생성(){
+    void 태그생성(){
         // given
         String tagName = "tag1";
 
@@ -68,7 +68,7 @@ public class TagServiceTest {
 
     // 태그명 중복 검증
     @Test
-    public void 태그명중복검증() throws TagException{
+    void 태그명중복검증() throws TagException{
         // given
         String tagName = "tag1";
         String tagName2 = "tag1";
@@ -82,7 +82,7 @@ public class TagServiceTest {
 
     // 태그 삭제
     @Test
-    public void 태그삭제(){
+    void 태그삭제(){
         // given
         String tagName = "tag1";
         Long tagId = tagService.createTag(tagName);
@@ -96,7 +96,7 @@ public class TagServiceTest {
 
     // 태그 구독
     @Test
-    public void 태그구독(){
+    void 태그구독(){
         // given
         String tagName = "tag1";
         Long tagId = tagService.createTag(tagName);
@@ -111,7 +111,7 @@ public class TagServiceTest {
 
     // 태그 구독 취소
     @Test
-    public void 태그구독취소(){
+    void 태그구독취소(){
         // given
         String tagName = "tag1";
         Long tagId = tagService.createTag(tagName);
@@ -127,7 +127,7 @@ public class TagServiceTest {
 
     // 태그 목록 조회
     @Test
-    public void 태그목록조회(){
+    void 태그목록조회(){
         // given
         User user = User.createUser("test", "test", null);
         Long userId = userRepository.save(user).getId();
@@ -148,7 +148,7 @@ public class TagServiceTest {
 
     // 태그 검색
     @Test
-    public void 태그검색(){
+    void 태그검색(){
         // given
         User user = User.createUser("test", "test", null);
         Long userId = userRepository.save(user).getId();
@@ -168,7 +168,7 @@ public class TagServiceTest {
 
     // 특정 태그가 포함된 게시물 목록 조회
     @Test
-    public void 특정태그가포함된게시물목록조회(){
+    void 특정태그가포함된게시물목록조회(){
         // given
         User user = userRepository.save(User.createUser("test", "test", null));
         Article article = Article.createArticle("test", "test");
@@ -188,7 +188,7 @@ public class TagServiceTest {
 
     // 특정 태그를 구독하는 유저 목록 조회
     @Test
-    public void 특정태그를구독하는유저목록조회(){
+    void 특정태그를구독하는유저목록조회(){
         // given
         User user  = userRepository.save(User.createUser("test", "test", null));
         Tag tag = tagRepository.save(Tag.createTag("tag1"));

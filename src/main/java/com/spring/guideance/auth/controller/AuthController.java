@@ -35,7 +35,7 @@ public class AuthController {
             return ApiResponse.success(userService.getUserByKeyCode(userInfo.getId().toString()), ResponseCode.USER_LOGINED.getMessage());
         } else {
             log.info("회원가입을 진행합니다.");
-            userService.createUser(new CreateUserDto(userInfo.getKakao_account().getProfile().getNickname(), userInfo.getId().toString(), userInfo.getKakao_account().getProfile().getProfile_image_url()));
+            userService.createUser(new CreateUserDto(userInfo.getKakaoAccount().getProfile().getNickname(), userInfo.getId().toString(), userInfo.getKakaoAccount().getProfile().getProfileImageUrl()));
             return ApiResponse.success(userService.getUserByKeyCode(userInfo.getId().toString()), ResponseCode.USER_CREATED.getMessage());
         }
     }

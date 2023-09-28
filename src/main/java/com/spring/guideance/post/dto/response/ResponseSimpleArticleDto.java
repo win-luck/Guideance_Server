@@ -3,6 +3,7 @@ package com.spring.guideance.post.dto.response;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.spring.guideance.post.domain.Article;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.io.Serializable;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @JsonSerialize
 @JsonDeserialize
+@AllArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class ResponseSimpleArticleDto implements Serializable {
 
     private Long articleId;
@@ -22,18 +24,6 @@ public class ResponseSimpleArticleDto implements Serializable {
     private int commentCount;
     private LocalDateTime createdAt;
     private boolean isLiked;
-
-    private ResponseSimpleArticleDto(Long articleId, String title, String contents, String authorName, String authorProfileImage, int likesCount, int commentCount, LocalDateTime createdAt, boolean isLiked) {
-        this.articleId = articleId;
-        this.title = title;
-        this.contents = contents;
-        this.authorName = authorName;
-        this.authorProfileImage = authorProfileImage;
-        this.likesCount = likesCount;
-        this.commentCount = commentCount;
-        this.createdAt = createdAt;
-        this.isLiked = isLiked;
-    }
 
     private ResponseSimpleArticleDto(Article article, boolean isLiked) {
         this.articleId = article.getId();
