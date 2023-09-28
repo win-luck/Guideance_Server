@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
-public class NoticeServiceTest {
+class NoticeServiceTest {
 
     @Autowired
     NoticeService noticeService;
