@@ -27,16 +27,11 @@ public class WebClientConfig {
     @Bean
     public WebClient webClient() {
 
-        Function<HttpClient, HttpClient> mapper = client -> {
-
-            return HttpClient.create()
-                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 1000)
-                    .doOnConnected(connection -> {
-                        connection.addHandlerLast(new ReadTimeoutHandler(10))
-                                .addHandlerLast(new WriteTimeoutHandler(10));
-                    })
-                    .responseTimeout(Duration.ofSeconds(1));
-        };
+        Function<HttpClient, HttpClient> mapper = client -> HttpClient.create()
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 1000)
+                .doOnConnected(connection -> connection.addHandlerLast(new ReadTimeoutHandler(10))
+                        .addHandlerLast(new WriteTimeoutHandler(10)))
+                .responseTimeout(Duration.ofSeconds(1));
 
         ClientHttpConnector connector =
                 new ReactorClientHttpConnector(resourceFactory(), mapper);

@@ -6,6 +6,6 @@ import lombok.Data;
 public class KakaoUserInfoResponse {
 
     private Long id;
-    private boolean has_signed_up;
-    private KakaoAccount kakao_account;
+    private boolean hasSignedUp;
+    private KakaoAccount kakaoAccount;
 }

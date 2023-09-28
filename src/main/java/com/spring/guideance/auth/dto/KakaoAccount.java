@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class KakaoAccount {
 
-    private kakaoProfile profile;
+    private KakaoProfile profile;
 }
