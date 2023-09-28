@@ -36,7 +36,7 @@ public class UserService {
     // 회원가입
     @Transactional
     public void createUser(CreateUserDto createUserDto) {
-        ValidateDuplicateUser(createUserDto);
+        validateDuplicateUser(createUserDto);
         userRepository.save(User.createUser(createUserDto.getName(), createUserDto.getKeyCode(), createUserDto.getProfileImage()));
     }
 
@@ -47,7 +47,7 @@ public class UserService {
     }
 
     // 중복 KeyCode 체크
-    private void ValidateDuplicateUser(CreateUserDto createUserDto) {
+    private void validateDuplicateUser(CreateUserDto createUserDto) {
         if(userRepository.existsByKeyCode(createUserDto.getKeyCode())) {
             throw new UserException(ResponseCode.USER_ALREADY_EXISTS);
         }
